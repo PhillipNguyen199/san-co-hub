@@ -560,8 +560,8 @@
       listEl.innerHTML = '';
 
       m.players.forEach((p, index) => {
-        // Kiểm tra xem đây có phải là người được thêm vào (khách/bạn ngoài) hay không
-        const isAddedPlayer = p.isGuest || !INITIAL_PLAYERS.includes(p.name);
+        // Chỉ hiển thị tag "Thêm" nếu cầu thủ này do cầu thủ khác thêm (nếu Đội trưởng thêm thì không hiện gì cả)
+        const showAddedTag = !INITIAL_PLAYERS.includes(p.name) && !p.addedByCaptain;
         
         const item = document.createElement('div');
         item.className = `p-2.5 rounded-xl border flex items-center justify-between transition ${
@@ -580,6 +580,16 @@
           `;
         }
 
+        // Hiển thị nhãn "Thêm" nếu do cầu thủ thêm; Đội trưởng có thể bấm trực tiếp vào nhãn để gỡ bỏ nếu muốn
+        let tagBadgeHTML = '';
+        if (showAddedTag) {
+          if (currentRole === 'captain') {
+            tagBadgeHTML = `<button onclick="removeGuestTag(${index})" class="text-[9px] bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 text-slate-600 px-1 py-0.2 rounded border border-slate-200 font-normal transition" title="Đội trưởng: Bấm để bỏ nhãn Thêm">Thêm <i class="fa-solid fa-xmark text-[8px] ml-0.5 opacity-60"></i></button>`;
+          } else {
+            tagBadgeHTML = `<span class="text-[9px] bg-slate-100 text-slate-600 px-1 py-0.2 rounded border border-slate-200 font-normal">Thêm</span>`;
+          }
+        }
+
         item.innerHTML = `
           <div class="flex items-center space-x-2.5 min-w-0">
             <button onclick="toggleAttendance(${index})" class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition flex-shrink-0 ${
@@ -590,7 +600,7 @@
             <div class="truncate">
               <div class="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5 ${p.isAttending ? '' : 'line-through text-slate-400'}">
                 <span>${p.name}</span>
-                ${isAddedPlayer ? `<span class="text-[9px] bg-slate-100 text-slate-600 px-1 py-0.2 rounded border border-slate-200 font-normal">Thêm</span>` : ''}
+                ${tagBadgeHTML}
               </div>
               ${p.isAttending && p.guestCount > 0 ? `<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">+${p.guestCount} bạn</span>` : ''}
             </div>
@@ -721,18 +731,34 @@
       const name = input.value.trim();
       if (!name) return;
 
+      const isCaptain = (currentRole === 'captain');
+
       matches[currentMatchIndex].players.push({
         name: name,
         isAttending: true,
         guestCount: 0,
         paymentStatus: 'unpaid',
-        isGuest: true
+        isGuest: !isCaptain,
+        addedByCaptain: isCaptain
       });
 
       input.value = '';
       saveToStorage();
       renderAll();
-      showToast(`Đã thêm cầu thủ: ${name}`);
+      showToast(isCaptain ? `Đội trưởng đã thêm: ${name}` : `Đã thêm bạn: ${name}`);
+    }
+
+    // ĐỘI TRƯỞNG BẤM VÀO NHÃN "THÊM" ĐỂ GỠ BỎ (CHUYỂN THÀNH THÀNH VIÊN CHÍNH THỨC)
+    function removeGuestTag(index) {
+      if (currentRole !== 'captain') return;
+      const player = matches[currentMatchIndex].players[index];
+      if (player) {
+        player.addedByCaptain = true;
+        player.isGuest = false;
+        saveToStorage();
+        renderAll();
+        showToast(`Đã gỡ nhãn "Thêm" cho ${player.name}`);
+      }
     }
 
     // CHỈ ĐỘI TRƯỞNG MỚI ĐƯỢC PHÉP GỌI HÀM NÀY
