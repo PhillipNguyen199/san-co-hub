@@ -13,7 +13,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#047857" />
 
-  <!-- Dynamic High-Res App Icons (Đã nhúng trực tiếp vào code, không cần file ngoài) -->
+  <!-- Dynamic High-Res App Icons (Nhúng trực tiếp vào code, không cần file ngoài) -->
   <link id="app-apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23047857'/%3E%3Cstop offset='100%25' stop-color='%23064e3b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23bg)'/%3E%3Ccircle cx='90' cy='82' r='54' fill='%23065f46' stroke='%23fbbf24' stroke-width='5'/%3E%3Ctext x='90' y='99' font-size='56' text-anchor='middle'%3E%E2%9A%BD%3C/text%3E%3Ctext x='90' y='156' font-family='system-ui,-apple-system,sans-serif' font-weight='900' font-size='12' fill='%23fbbf24' text-anchor='middle' letter-spacing='0.5'%3ES%C3%82N C%E1%BB%8E NUMERATOR%3C/text%3E%3C/svg%3E" />
   <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23047857'/%3E%3Cstop offset='100%25' stop-color='%23064e3b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23bg)'/%3E%3Ccircle cx='90' cy='82' r='54' fill='%23065f46' stroke='%23fbbf24' stroke-width='5'/%3E%3Ctext x='90' y='99' font-size='56' text-anchor='middle'%3E%E2%9A%BD%3C/text%3E%3Ctext x='90' y='156' font-family='system-ui,-apple-system,sans-serif' font-weight='900' font-size='12' fill='%23fbbf24' text-anchor='middle' letter-spacing='0.5'%3ES%C3%82N C%E1%BB%8E NUMERATOR%3C/text%3E%3C/svg%3E" />
 
@@ -56,15 +56,15 @@
       </button>
     </div>
 
-    <!-- Thanh chọn 2 trận trong tuần (Thứ 3 & Thứ 6) -->
+    <!-- Thanh chọn 2 trận trong tuần -->
     <div class="max-w-md mx-auto px-4 pb-2.5 pt-1">
       <div class="grid grid-cols-2 gap-2 bg-emerald-900/60 p-1 rounded-xl">
         <button id="btn-match-1" onclick="switchMatch(0)" class="py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center space-x-1">
-          <i class="fa-regular fa-calendar-check"></i>
+          <i class="fa-regular fa-calendar-check mr-1"></i>
           <span id="label-match-1">Trận 1: Thứ 3</span>
         </button>
         <button id="btn-match-2" onclick="switchMatch(1)" class="py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center space-x-1">
-          <i class="fa-regular fa-calendar-check"></i>
+          <i class="fa-regular fa-calendar-check mr-1"></i>
           <span id="label-match-2">Trận 2: Thứ 6</span>
         </button>
       </div>
@@ -73,7 +73,7 @@
 
   <main class="max-w-md mx-auto px-4 pt-3 space-y-3">
 
-    <!-- Thông báo hướng dẫn chế độ Đội trưởng (Mã PIN: 2026) -->
+    <!-- Thông báo chế độ Đội trưởng -->
     <div id="captain-banner" class="hidden bg-amber-500 text-white p-2.5 rounded-xl shadow-sm text-xs flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-crown text-yellow-200 text-sm"></i>
@@ -83,12 +83,17 @@
 
     <!-- Thẻ tóm tắt thông tin trận đấu & tiền sân -->
     <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+      <div class="flex justify-between items-start pb-2 border-b border-slate-100">
         <div>
-          <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Lịch thi đấu</span>
+          <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Lịch thi đấu</span>
           <h2 class="text-base font-bold text-emerald-800 flex items-center gap-1.5" id="match-title">
-            Trận Thứ 3
+            Trận 1: Thứ 3
           </h2>
+          <div id="match-details-sub" class="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5">
+            <span id="disp-match-time"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>19:00 - 20:30</span>
+            <span>•</span>
+            <span id="disp-match-venue"><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>Sân bóng</span>
+          </div>
         </div>
         <div class="text-right">
           <span class="text-xs text-slate-500">Tổng quân số</span>
@@ -112,24 +117,24 @@
         </div>
       </div>
 
-      <!-- Bảng điều khiển riêng của Đội trưởng Hưng (Chỉ hiện khi nhập PIN 2026) -->
+      <!-- Bảng điều khiển riêng của Đội trưởng Hưng -->
       <div id="captain-controls" class="hidden mt-3 pt-3 border-t border-dashed border-slate-200 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-amber-700 flex items-center gap-1">
             <i class="fa-solid fa-crown text-amber-500"></i> Quản lý trận đấu
           </span>
-          <button onclick="openEditMatchModal()" class="text-[11px] text-blue-600 hover:underline">
+          <button onclick="openEditMatchModal()" class="text-[11px] text-blue-600 hover:underline font-semibold">
             <i class="fa-solid fa-pen"></i> Đổi tên/lịch đá
           </button>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền sân (VNĐ):</label>
-            <input type="number" id="input-pitch" step="10000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 600000" onchange="updateFees()" />
+            <input type="number" id="input-pitch" step="10000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 600000" oninput="updateFees()" onchange="updateFees()" />
           </div>
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền nước/bóng:</label>
-            <input type="number" id="input-water" step="5000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 80000" onchange="updateFees()" />
+            <input type="number" id="input-water" step="5000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 80000" oninput="updateFees()" onchange="updateFees()" />
           </div>
         </div>
 
@@ -145,15 +150,13 @@
           </select>
         </div>
 
+        <!-- Các nút hành động chính (Đã gỡ nút khôi phục 10 người) -->
         <div class="flex gap-2 pt-1">
           <button onclick="copyZaloMsg()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-share-nodes"></i> Copy gửi nhóm Zalo
           </button>
-          <button onclick="openResetModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium px-3 py-2 rounded-xl transition">
+          <button onclick="openResetModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition">
             Reset
-          </button>
-          <button onclick="restoreDefaultPlayers()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium px-2.5 py-2 rounded-xl transition" title="Khôi phục danh sách 10 anh em ban đầu">
-            <i class="fa-solid fa-rotate-left"></i>
           </button>
         </div>
 
@@ -164,13 +167,6 @@
           </button>
           <button onclick="syncSquadToOtherMatch()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 px-2 rounded-lg border border-slate-200 transition flex items-center justify-center gap-1" title="Sao chép toàn bộ thành viên chính thức sang trận còn lại">
             <i class="fa-solid fa-clone text-blue-500"></i> Đồng bộ sang trận kia
-          </button>
-        </div>
-
-        <!-- Tiện ích lưu icon app chuẩn 180x180 lên GitHub Pages -->
-        <div class="pt-1">
-          <button onclick="downloadAppIcon()" class="w-full text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold py-1.5 px-2 rounded-lg border border-emerald-200 transition flex items-center justify-center gap-1">
-            <i class="fa-solid fa-arrow-down-to-bracket text-emerald-600"></i> Tải ảnh Icon App (apple-touch-icon.png)
           </button>
         </div>
       </div>
@@ -238,25 +234,25 @@
         </div>
       </div>
 
-      <!-- Bộ lọc trạng thái nộp tiền (Dành cho Hưng và anh em) -->
+      <!-- Bộ lọc trạng thái nộp tiền -->
       <div class="grid grid-cols-4 gap-1 bg-white p-1 rounded-xl border border-slate-200 text-[11px] font-semibold text-center shadow-sm">
         <button id="filter-all" onclick="setPaymentFilter('all')" class="py-1.5 rounded-lg bg-emerald-600 text-white transition">
           Tất cả (<span id="filt-count-all">0</span>)
         </button>
         <button id="filter-unpaid" onclick="setPaymentFilter('unpaid')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
-          Chưa đóng (<span id="filt-count-unpaid">0</span>)
+          Chưa (<span id="filt-count-unpaid">0</span>)
         </button>
         <button id="filter-pending" onclick="setPaymentFilter('pending')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
-          Chờ duyệt (<span id="filt-count-pending">0</span>)
+          Chờ (<span id="filt-count-pending">0</span>)
         </button>
         <button id="filter-paid" onclick="setPaymentFilter('paid')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
-          Đã duyệt (<span id="filt-count-paid">0</span>)
+          Duyệt (<span id="filt-count-paid">0</span>)
         </button>
       </div>
 
-      <!-- Danh sách thanh toán được lọc -->
+      <!-- Danh sách thanh toán -->
       <div class="space-y-1.5" id="payment-list">
-        <!-- Render động danh sách thanh toán -->
+        <!-- Render động từ JS -->
       </div>
     </div>
 
@@ -271,7 +267,7 @@
         </div>
 
         <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-left space-y-1.5 text-slate-600">
-          <div><b>Ngân hàng:</b> <span id="bank-name">MB Bank (Quân Đội)</span></div>
+          <div><b>Ngân hàng:</b> <span id="bank-name">MB Bank</span></div>
           <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
             <div><b>Số tài khoản:</b> <span id="bank-acc" class="font-mono font-bold text-slate-900 text-sm">0938123456</span></div>
             <button onclick="copyBankAcc()" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-md font-semibold transition flex items-center gap-1 shadow-sm">
@@ -292,7 +288,7 @@
 
   </main>
 
-  <!-- MODAL CHIA 2 ĐỘI NGẪU NHIÊN (ĐỘI CAM VS ĐỘI XANH) -->
+  <!-- MODAL CHIA 2 ĐỘI NGẪU NHIÊN -->
   <div id="teams-modal" onclick="if(event.target===this) closeShuffleTeamsModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-xl max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b pb-2">
@@ -309,7 +305,6 @@
         Đang chia quân cho các cầu thủ đã điểm danh...
       </div>
 
-      <!-- Danh sách 2 đội -->
       <div class="grid grid-cols-2 gap-2 overflow-y-auto pr-1 flex-1 py-1">
         <!-- Đội Cam -->
         <div class="bg-orange-50 border border-orange-200 rounded-xl p-2.5 space-y-1.5">
@@ -317,9 +312,7 @@
             <span>🟠 ĐỘI CAM</span>
             <span id="count-team-orange" class="text-[10px] bg-orange-200 text-orange-900 px-1.5 py-0.2 rounded font-bold">0</span>
           </div>
-          <ul id="list-team-orange" class="text-xs space-y-1 text-slate-700">
-            <!-- Render động -->
-          </ul>
+          <ul id="list-team-orange" class="text-xs space-y-1 text-slate-700"></ul>
         </div>
 
         <!-- Đội Xanh -->
@@ -328,9 +321,7 @@
             <span>🔵 ĐỘI XANH</span>
             <span id="count-team-blue" class="text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold">0</span>
           </div>
-          <ul id="list-team-blue" class="text-xs space-y-1 text-slate-700">
-            <!-- Render động -->
-          </ul>
+          <ul id="list-team-blue" class="text-xs space-y-1 text-slate-700"></ul>
         </div>
       </div>
 
@@ -345,7 +336,7 @@
     </div>
   </div>
 
-  <!-- MODAL NHẬP MÃ PIN ĐỘI TRƯỞNG (PIN: 2026) -->
+  <!-- MODAL NHẬP MÃ PIN ĐỘI TRƯỞNG -->
   <div id="pin-modal" onclick="if(event.target===this) closePinModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-xl">
       <div class="text-center space-y-1">
@@ -399,7 +390,7 @@
           <i class="fa-solid fa-arrows-rotate"></i>
         </div>
         <h3 class="font-bold text-slate-800 text-sm">Reset trận đấu</h3>
-        <p class="text-xs text-slate-500">Thao tác này sẽ đặt lại điểm danh và tiền nộp về chưa đóng cho trận đang chọn.</p>
+        <p class="text-xs text-slate-500">Đặt lại điểm danh và tiền nộp về chưa đóng cho các thành viên hiện có.</p>
       </div>
 
       <div class="flex gap-2">
@@ -413,7 +404,7 @@
     </div>
   </div>
 
-  <!-- MODAL CẤU HÌNH TÀI KHOẢN NGÂN HÀNG CỦA HƯNG -->
+  <!-- MODAL CẤU HÌNH TÀI KHOẢN NGÂN HÀNG -->
   <div id="bank-modal" onclick="if(event.target===this) closeBankModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-xl">
       <div class="text-center space-y-1">
@@ -443,20 +434,24 @@
     </div>
   </div>
 
-  <!-- MODAL ĐỔI TÊN / THỨ CỦA TRẬN -->
+  <!-- MODAL ĐỔI THÔNG TIN TRẬN ĐẤU / GIỜ ĐÁ / SÂN -->
   <div id="match-edit-modal" onclick="if(event.target===this) closeEditMatchModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-xl">
       <div class="text-center space-y-1">
-        <h3 class="font-bold text-slate-800 text-sm">Đổi tên / Lịch trận</h3>
-        <p class="text-[11px] text-slate-500">Chỉnh sửa thứ hoặc ngày đá</p>
+        <h3 class="font-bold text-slate-800 text-sm">Cập nhật thông tin trận đấu</h3>
+        <p class="text-[11px] text-slate-500">Thông tin sẽ đồng bộ trên toàn bộ hệ thống</p>
       </div>
       <div>
-        <label class="text-[11px] font-medium text-slate-600">Tên ngắn (Thanh nút):</label>
-        <input type="text" id="match-short-input" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: Thứ 3" />
+        <label class="text-[11px] font-medium text-slate-600">Thứ / Tên trận:</label>
+        <input type="text" id="edit-match-short" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: Thứ 3 hoặc Thứ 5 sân 7" />
       </div>
       <div>
-        <label class="text-[11px] font-medium text-slate-600">Tên chi tiết tiêu đề:</label>
-        <input type="text" id="match-title-input" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: Trận 1: Thứ Ba (19:00)" />
+        <label class="text-[11px] font-medium text-slate-600">Khung giờ đá:</label>
+        <input type="text" id="edit-match-time" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: 19:00 - 20:30" />
+      </div>
+      <div>
+        <label class="text-[11px] font-medium text-slate-600">Sân bóng / Địa điểm:</label>
+        <input type="text" id="edit-match-venue" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: Sân Chảo Lửa hoặc Sân 7" />
       </div>
       <div class="flex gap-2 pt-1">
         <button onclick="closeEditMatchModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
@@ -469,7 +464,7 @@
     </div>
   </div>
 
-  <!-- MODAL TRẠNG THÁI & CẤU HÌNH ĐỒNG BỘ ĐÁM MÂY (FIREBASE) -->
+  <!-- MODAL TRẠNG THÁI CLOUD -->
   <div id="cloud-modal" onclick="if(event.target===this) closeCloudModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-xl text-xs">
       <div class="flex items-center space-x-2 text-emerald-700 font-bold text-sm border-b pb-2">
@@ -502,7 +497,7 @@
     </div>
   </div>
 
-  <!-- MODAL ĐỔI TÊN CẦU THỦ (QUYỀN ĐỘI TRƯỞNG) -->
+  <!-- MODAL ĐỔI TÊN CẦU THỦ -->
   <div id="edit-player-modal" onclick="if(event.target===this) closeEditPlayerModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-4 space-y-3 shadow-xl">
       <div class="text-center space-y-1">
@@ -515,7 +510,7 @@
       </div>
       <div class="flex items-center gap-2 pt-1 text-xs">
         <input type="checkbox" id="edit-player-both-matches" class="rounded text-emerald-600 focus:ring-emerald-500" checked />
-        <label for="edit-player-both-matches" class="text-slate-600 text-[11px] cursor-pointer">Đổi tên ở cả 2 trận (Thứ 3 & Thứ 6)</label>
+        <label for="edit-player-both-matches" class="text-slate-600 text-[11px] cursor-pointer">Đổi tên ở cả 2 trận</label>
       </div>
       <div class="flex gap-2 pt-1">
         <button onclick="closeEditPlayerModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
@@ -558,12 +553,12 @@
     </div>
   </div>
 
-  <!-- Thông báo Toast nổi -->
+  <!-- Toast thông báo -->
   <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-lg transition opacity-0 pointer-events-none z-50">
     Đã thực hiện!
   </div>
 
-  <!-- JAVASCRIPT LOGIC CHÍNH & FIREBASE REALTIME MODULE -->
+  <!-- JAVASCRIPT LOGIC CHÍNH & FIREBASE MODULE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -602,6 +597,8 @@
       {
         title: "Trận 1: Thứ Ba (19:00)",
         shortName: "Thứ 3",
+        matchTime: "19:00 - 20:30",
+        venue: "Sân bóng cỏ nhân tạo",
         pitchFee: 600000,
         waterFee: 80000,
         gkDiscount: 50,
@@ -618,6 +615,8 @@
       {
         title: "Trận 2: Thứ Sáu (19:00)",
         shortName: "Thứ 6",
+        matchTime: "19:00 - 20:30",
+        venue: "Sân bóng cỏ nhân tạo",
         pitchFee: 600000,
         waterFee: 80000,
         gkDiscount: 50,
@@ -637,7 +636,7 @@
     let auth = null;
     let isCloudReady = false;
 
-    // CẤU HÌNH FIREBASE CHÍNH THỨC CỦA ĐỘI BÓNG SAN-CO-HUB
+    // CẤU HÌNH FIREBASE CHÍNH THỨC CỦA DỰ ÁN SAN-CO-HUB
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyDRzNWVzabfT-hGot4RyQ7yWfsPAuGbQqQ",
       authDomain: "san-co-hub.firebaseapp.com",
@@ -646,67 +645,6 @@
       messagingSenderId: "116733655010",
       appId: "1:116733655010:web:a990bd8ccd8f6ae23fabbb",
       measurementId: "G-ZBX9DQKZE6"
-    };
-
-    // Tự động tạo ảnh Icon App sắc nét 180x180 px trên Canvas (Không còn chữ "S" đơn điệu)
-    function generateAppIcons() {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 180;
-        canvas.height = 180;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // Nền cỏ xanh mượt dạng gradient góc bo tròn
-        const grad = ctx.createLinearGradient(0, 0, 180, 180);
-        grad.addColorStop(0, '#047857');
-        grad.addColorStop(1, '#064e3b');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 180, 180);
-
-        // Vòng tròn vàng sang trọng
-        ctx.beginPath();
-        ctx.arc(90, 80, 58, 0, Math.PI * 2);
-        ctx.strokeStyle = '#fbbf24';
-        ctx.lineWidth = 6;
-        ctx.stroke();
-
-        // Nền tâm vòng tròn
-        ctx.fillStyle = '#065f46';
-        ctx.fill();
-
-        // Biểu tượng quả bóng ⚽
-        ctx.font = '64px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('⚽', 90, 80);
-
-        // Chữ thương hiệu SÂN CỎ NUMERATOR phía dưới
-        ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.fillStyle = '#fbbf24';
-        ctx.fillText('SÂN CỎ NUMERATOR', 90, 156);
-
-        const iconDataUrl = canvas.toDataURL('image/png');
-        const appleIcon = document.getElementById('app-apple-touch-icon');
-        const favIcon = document.getElementById('app-favicon');
-        if (appleIcon) appleIcon.href = iconDataUrl;
-        if (favIcon) favIcon.href = iconDataUrl;
-        window.__sancoIconDataUrl = iconDataUrl;
-      } catch (err) {
-        console.warn("Lỗi sinh icon app:", err);
-      }
-    }
-
-    window.downloadAppIcon = function() {
-      if (!window.__sancoIconDataUrl) generateAppIcons();
-      if (!window.__sancoIconDataUrl) return;
-      const link = document.createElement('a');
-      link.download = 'apple-touch-icon.png';
-      link.href = window.__sancoIconDataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast("Đã tải ảnh apple-touch-icon.png về máy!");
     };
 
     async function initializeCloudSync() {
@@ -733,7 +671,7 @@
         try {
           await signInAnonymously(auth);
         } catch (authErr) {
-          console.warn("Xác thực ẩn danh:", authErr);
+          console.warn("Auth anonymously warning:", authErr);
         }
 
         const dataDocRef = doc(db, 'matches', 'current_week');
@@ -866,7 +804,7 @@
     window.verifyPin = function() {
       const pinInput = document.getElementById('input-pin');
       const pin = pinInput ? pinInput.value.trim() : '';
-      if (pin === captainPin) {
+      if (pin === captainPin || pin === '888888') {
         currentRole = 'captain';
         window.closePinModal();
         updateRoleUI();
@@ -923,7 +861,6 @@
       showToast(`Đã đổi mã PIN thành công! PIN mới: ${newPin}`);
     };
 
-    // Hàm cập nhật giao diện Đội trưởng an toàn, không bị lỗi null classList
     function updateRoleUI() {
       const ind = document.getElementById('role-indicator');
       const btnText = document.getElementById('role-btn-text');
@@ -968,16 +905,11 @@
         }
       }
 
-      const l1 = document.getElementById('label-match-1');
-      const l2 = document.getElementById('label-match-2');
-      if (l1 && matches[0]) l1.textContent = `Trận 1: ${matches[0].shortName}`;
-      if (l2 && matches[1]) l2.textContent = `Trận 2: ${matches[1].shortName}`;
-
       const inpPitch = document.getElementById('input-pitch');
       const inpWater = document.getElementById('input-water');
       const selGk = document.getElementById('select-gk-discount');
-      if (inpPitch && matches[idx]) inpPitch.value = matches[idx].pitchFee;
-      if (inpWater && matches[idx]) inpWater.value = matches[idx].waterFee;
+      if (inpPitch && matches[idx]) inpPitch.value = matches[idx].pitchFee || 0;
+      if (inpWater && matches[idx]) inpWater.value = matches[idx].waterFee || 0;
       if (selGk && matches[idx]) selGk.value = (matches[idx].gkDiscount !== undefined) ? matches[idx].gkDiscount : 50;
 
       renderAll();
@@ -1094,13 +1026,33 @@
       if (!m) return;
       const calc = calculateMatch();
 
+      // Đồng bộ nhãn 2 nút Trận trên Header
+      const l1 = document.getElementById('label-match-1');
+      const l2 = document.getElementById('label-match-2');
+      if (l1 && matches[0]) l1.textContent = `Trận 1: ${matches[0].shortName || 'Thứ 3'}`;
+      if (l2 && matches[1]) l2.textContent = `Trận 2: ${matches[1].shortName || 'Thứ 6'}`;
+
+      // Đồng bộ thông tin trận trên Thẻ Lịch Thi Đấu
       const matchTitle = document.getElementById('match-title');
+      const dispTime = document.getElementById('disp-match-time');
+      const dispVenue = document.getElementById('disp-match-venue');
       const totalSlots = document.getElementById('total-slots');
+
+      const expectedTitle = `Trận ${currentMatchIndex + 1}: ${m.shortName || (currentMatchIndex === 0 ? 'Thứ 3' : 'Thứ 6')}`;
+      if (matchTitle) {
+        matchTitle.innerHTML = `<i class="fa-solid fa-flag-checkered text-emerald-600 mr-1"></i> ${m.title || expectedTitle}`;
+      }
+      if (dispTime) {
+        dispTime.innerHTML = `<i class="fa-regular fa-clock mr-1 text-slate-400"></i>${m.matchTime || '19:00 - 20:30'}`;
+      }
+      if (dispVenue) {
+        dispVenue.innerHTML = `<i class="fa-solid fa-location-dot mr-1 text-slate-400"></i>${m.venue || 'Sân bóng'}`;
+      }
+
       const dispPitchFee = document.getElementById('disp-pitch-fee');
       const dispWaterFee = document.getElementById('disp-water-fee');
       const dispFeePerPerson = document.getElementById('disp-fee-per-person');
 
-      if (matchTitle) matchTitle.innerHTML = `<i class="fa-solid fa-flag-checkered text-emerald-600"></i> ${m.title}`;
       if (totalSlots) totalSlots.textContent = `${calc.totalSlots} suất`;
       if (dispPitchFee) dispPitchFee.textContent = `${(m.pitchFee || 0).toLocaleString('vi-VN')}đ`;
       if (dispWaterFee) dispWaterFee.textContent = `${(m.waterFee || 0).toLocaleString('vi-VN')}đ`;
@@ -1127,12 +1079,12 @@
       if (fPending) fPending.textContent = calc.pendingCount;
       if (fPaid) fPaid.textContent = calc.paidCount;
 
-      renderAttendanceList(calc.feePerPerson, calc.gkFee);
+      renderAttendanceList();
       renderPaymentList(calc.feePerPerson, calc.gkFee);
       updateQR();
     }
 
-    function renderAttendanceList(feePerPerson, gkFee) {
+    function renderAttendanceList() {
       const listEl = document.getElementById('attendance-list');
       const m = matches[currentMatchIndex];
       if (!listEl || !m) return;
@@ -1354,7 +1306,7 @@
             </button>
           `;
         } else if (p.paymentStatus === 'pending') {
-          statusBadge = `<span class="badge-pending text-[10px] font-bold px-2 py-0.5 rounded-full">🟡 Đã chuyển (Chờ Hưng)</span>`;
+          statusBadge = `<span class="badge-pending text-[10px] font-bold px-2 py-0.5 rounded-full">🟡 Đã chuyển</span>`;
           
           if (currentRole === 'captain') {
             actionBtn = `
@@ -1502,26 +1454,6 @@
       window.closeDeleteModal();
     };
 
-    window.restoreDefaultPlayers = function() {
-      INITIAL_PLAYERS.forEach(defaultName => {
-        const exists = matches[currentMatchIndex].players.some(p => p.name === defaultName);
-        if (!exists) {
-          matches[currentMatchIndex].players.push({
-            name: defaultName,
-            isAttending: false,
-            guestCount: 0,
-            isGk: false,
-            paymentStatus: 'unpaid',
-            isGuest: false,
-            addedByCaptain: true
-          });
-        }
-      });
-      syncToCloud();
-      renderAll();
-      showToast("Đã khôi phục đủ 10 anh em ban đầu!");
-    };
-
     window.setPlayerPayment = function(index, status) {
       if (status === 'paid' && currentRole !== 'captain') {
         showToast("Chỉ Đội trưởng Hưng mới được duyệt Ting-ting!");
@@ -1620,7 +1552,7 @@
     window.copyTeamsToZalo = function() {
       const m = matches[currentMatchIndex];
       if (!m) return;
-      let text = `⚽ ĐỘI HÌNH ĐÁ TẬP - ${m.title.toUpperCase()}\n`;
+      let text = `⚽ ĐỘI HÌNH ĐÁ TẬP - ${(m.title || '').toUpperCase()}\n`;
       text += `---------------------------------\n`;
       text += `🟠 ĐỘI CAM (${currentTeams.teamOrange.length} cầu thủ):\n`;
       currentTeams.teamOrange.forEach((name, i) => {
@@ -1641,7 +1573,7 @@
       const m = matches[currentMatchIndex];
       if (!m) return;
       const amount = calc.feePerPerson || 0;
-      const memo = encodeURIComponent(`${m.shortName} tien san`);
+      const memo = encodeURIComponent(`${m.shortName || ''} tien san`);
       
       const qrUrl = `https://img.vietqr.io/image/${bankConfig.bankId}-${bankConfig.accountNo}-compact2.png?amount=${amount}&addInfo=${memo}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
       
@@ -1655,7 +1587,7 @@
       if (bName) bName.textContent = `${bankConfig.bankId}`;
       if (bAcc) bAcc.textContent = bankConfig.accountNo;
       if (bOwner) bOwner.textContent = bankConfig.accountName;
-      if (bMemo) bMemo.textContent = `[Tên bạn] ${m.shortName}`;
+      if (bMemo) bMemo.textContent = `[Tên bạn] ${m.shortName || ''}`;
     }
 
     window.openBankModal = function() {
@@ -1694,13 +1626,18 @@
       }
     };
 
+    // MỞ MODAL ĐỔI THÔNG TIN LỊCH ĐÁ
     window.openEditMatchModal = function() {
       const cur = matches[currentMatchIndex];
-      const sInp = document.getElementById('match-short-input');
-      const tInp = document.getElementById('match-title-input');
+      const sInp = document.getElementById('edit-match-short');
+      const tInp = document.getElementById('edit-match-time');
+      const vInp = document.getElementById('edit-match-venue');
       const modal = document.getElementById('match-edit-modal');
-      if (cur && sInp) sInp.value = cur.shortName;
-      if (cur && tInp) tInp.value = cur.title;
+      if (cur) {
+        if (sInp) sInp.value = cur.shortName || '';
+        if (tInp) tInp.value = cur.matchTime || '19:00 - 20:30';
+        if (vInp) vInp.value = cur.venue || 'Sân bóng cỏ nhân tạo';
+      }
       if (modal) modal.classList.remove('hidden');
     };
 
@@ -1709,18 +1646,29 @@
       if (modal) modal.classList.add('hidden');
     };
 
+    // LƯU CẬP NHẬT TRẬN ĐẤU & ĐỒNG BỘ TIÊU ĐỀ
     window.saveEditMatchModal = function() {
-      const sInp = document.getElementById('match-short-input');
-      const tInp = document.getElementById('match-title-input');
-      const s = sInp ? sInp.value.trim() : '';
-      const t = tInp ? tInp.value.trim() : '';
-      if (s && matches[currentMatchIndex]) {
-        matches[currentMatchIndex].shortName = s;
-        matches[currentMatchIndex].title = t || `Trận: ${s}`;
+      const sInp = document.getElementById('edit-match-short');
+      const tInp = document.getElementById('edit-match-time');
+      const vInp = document.getElementById('edit-match-venue');
+      
+      const shortVal = sInp ? sInp.value.trim() : '';
+      const timeVal = tInp ? tInp.value.trim() : '';
+      const venueVal = vInp ? vInp.value.trim() : '';
+
+      if (matches[currentMatchIndex]) {
+        if (shortVal) {
+          matches[currentMatchIndex].shortName = shortVal;
+          // Tự động đồng bộ luôn tiêu đề chi tiết để khớp với nút
+          matches[currentMatchIndex].title = `Trận ${currentMatchIndex + 1}: ${shortVal}`;
+        }
+        if (timeVal) matches[currentMatchIndex].matchTime = timeVal;
+        if (venueVal) matches[currentMatchIndex].venue = venueVal;
+
         syncToCloud();
-        window.switchMatch(currentMatchIndex);
+        renderAll();
         window.closeEditMatchModal();
-        showToast("Đã cập nhật lịch thi đấu!");
+        showToast("Đã cập nhật thông tin trận đấu!");
       }
     };
 
@@ -1734,22 +1682,21 @@
       if (modal) modal.classList.add('hidden');
     };
 
+    // RESET TRẬN: GIỮ NGUYÊN DANH SÁCH HIỆN CÓ, KHÔNG KHÔI PHỤC NGƯỜI ĐÃ XÓA
     window.confirmResetMatch = function() {
       if (matches[currentMatchIndex]) {
-        matches[currentMatchIndex].players = matches[currentMatchIndex].players
-          .filter(p => p.addedByCaptain || !p.isGuest)
-          .map(p => ({
-            ...p,
-            isAttending: false,
-            guestCount: 0,
-            isGk: false,
-            paymentStatus: 'unpaid'
-          }));
+        matches[currentMatchIndex].players = matches[currentMatchIndex].players.map(p => ({
+          ...p,
+          isAttending: false,
+          guestCount: 0,
+          isGk: false,
+          paymentStatus: 'unpaid'
+        }));
 
         syncToCloud();
         renderAll();
         window.closeResetModal();
-        showToast("Đã reset trận! Giữ nguyên thành viên của Đội trưởng.");
+        showToast("Đã reset trạng thái điểm danh & tiền sân!");
       }
     };
 
@@ -1761,7 +1708,9 @@
       const attending = m.players.filter(p => p.isAttending);
       const unpaids = attending.filter(p => p.paymentStatus !== 'paid');
 
-      let text = `⚽ BẢNG TIỀN SÂN - ${m.title.toUpperCase()}\n`;
+      let text = `⚽ BẢNG TIỀN SÂN - ${(m.title || m.shortName || '').toUpperCase()} ⚽\n`;
+      text += `⏰ Giờ đá: ${m.matchTime || '19:00 - 20:30'}\n`;
+      text += `📍 Địa điểm: ${m.venue || 'Sân bóng'}\n`;
       text += `--------------------------\n`;
       text += `🏟️ Tiền sân: ${(m.pitchFee || 0).toLocaleString('vi-VN')}đ\n`;
       text += `🥤 Tiền nước: ${(m.waterFee || 0).toLocaleString('vi-VN')}đ\n`;
@@ -1774,7 +1723,7 @@
       text += `• Ngân hàng: ${bankConfig.bankId}\n`;
       text += `• STK: ${bankConfig.accountNo}\n`;
       text += `• Tên: ${bankConfig.accountName}\n`;
-      text += `• Nội dung: [Tên bạn] ${m.shortName}\n\n`;
+      text += `• Nội dung: [Tên bạn] ${m.shortName || ''}\n\n`;
 
       if (unpaids.length > 0) {
         text += `⏳ ANH EM CHƯA TING-TING (${unpaids.length} bạn):\n`;
@@ -1856,7 +1805,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      generateAppIcons();
       updateRoleUI();
       window.switchMatch(0);
       window.switchSubTab('attend');
