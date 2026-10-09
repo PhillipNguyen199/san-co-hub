@@ -143,6 +143,16 @@
             <i class="fa-solid fa-rotate-left"></i>
           </button>
         </div>
+
+        <!-- Công cụ quản trị nâng cao của Đội trưởng -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="openChangePinModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 px-2 rounded-lg border border-slate-200 transition flex items-center justify-center gap-1">
+            <i class="fa-solid fa-key text-amber-500"></i> Đổi mã PIN Đội trưởng
+          </button>
+          <button onclick="syncSquadToOtherMatch()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 px-2 rounded-lg border border-slate-200 transition flex items-center justify-center gap-1" title="Sao chép toàn bộ thành viên chính thức sang trận còn lại">
+            <i class="fa-solid fa-clone text-blue-500"></i> Đồng bộ sang trận kia
+          </button>
+        </div>
       </div>
     </div>
 
@@ -193,6 +203,18 @@
         <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
         <div>
           Anh em chuyển khoản xong bấm <b>"Tôi đã chuyển"</b>. Đội trưởng Hưng kiểm tra ting-ting sẽ bấm duyệt nhé!
+        </div>
+      </div>
+
+      <!-- Thống kê thu tiền thực tế cho Hưng -->
+      <div class="grid grid-cols-2 gap-2 bg-white p-2 rounded-xl border border-slate-200 text-xs shadow-sm">
+        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100 text-center">
+          <span class="text-[10px] text-emerald-600 block">Đã thu về</span>
+          <span class="text-xs font-extrabold text-emerald-700" id="disp-collected-money">0đ</span>
+        </div>
+        <div class="bg-amber-50 p-2 rounded-lg border border-amber-100 text-center">
+          <span class="text-[10px] text-amber-600 block">Còn thiếu</span>
+          <span class="text-xs font-extrabold text-amber-700" id="disp-remaining-money">0đ</span>
         </div>
       </div>
 
@@ -460,6 +482,62 @@
     </div>
   </div>
 
+  <!-- MODAL ĐỔI TÊN CẦU THỦ (QUYỀN ĐỘI TRƯỞNG) -->
+  <div id="edit-player-modal" onclick="if(event.target===this) closeEditPlayerModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-4 space-y-3 shadow-xl">
+      <div class="text-center space-y-1">
+        <h3 class="font-bold text-slate-800 text-sm">Đổi tên cầu thủ</h3>
+        <p class="text-[11px] text-slate-500">Chỉnh sửa tên hiển thị trên hệ thống</p>
+      </div>
+      <div>
+        <label class="text-[11px] font-medium text-slate-600">Tên mới:</label>
+        <input type="text" id="edit-player-name-input" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="Nhập tên cầu thủ" onkeydown="if(event.key==='Enter') saveEditPlayerModal()" />
+      </div>
+      <div class="flex items-center gap-2 pt-1 text-xs">
+        <input type="checkbox" id="edit-player-both-matches" class="rounded text-emerald-600 focus:ring-emerald-500" checked />
+        <label for="edit-player-both-matches" class="text-slate-600 text-[11px] cursor-pointer">Đổi tên ở cả 2 trận (Thứ 3 & Thứ 6)</label>
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeEditPlayerModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+          Hủy
+        </button>
+        <button onclick="saveEditPlayerModal()" class="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition">
+          Lưu tên
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ĐỔI MÃ PIN ĐỘI TRƯỞNG -->
+  <div id="change-pin-modal" onclick="if(event.target===this) closeChangePinModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-xl">
+      <div class="text-center space-y-1">
+        <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-lg font-bold">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <h3 class="font-bold text-slate-800 text-sm">Đổi mã PIN Đội trưởng</h3>
+        <p class="text-xs text-slate-500">Mã PIN mới sẽ lưu lên Cloud để Hưng đăng nhập trên mọi máy</p>
+      </div>
+      <div>
+        <label class="text-[11px] font-medium text-slate-600">Nhập mã PIN mới (4 - 6 số):</label>
+        <div class="relative mt-1">
+          <input type="password" id="input-new-pin" maxlength="6" class="w-full text-center tracking-widest text-lg font-bold py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-9" placeholder="VD: 2026" onkeydown="if(event.key==='Enter') saveNewPin()" />
+          <button type="button" onclick="togglePinVisibility()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs p-1" title="Ẩn/Hiện PIN">
+            <i class="fa-solid fa-eye" id="pin-eye-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeChangePinModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+          Hủy
+        </button>
+        <button onclick="saveNewPin()" class="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition">
+          Lưu PIN mới
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Thông báo Toast nổi -->
   <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-lg transition opacity-0 pointer-events-none z-50">
     Đã thực hiện!
@@ -491,6 +569,7 @@
     let activeSubTab = 'attend';
     let paymentFilter = 'all';  // 'all' | 'unpaid' | 'pending' | 'paid'
     let playerToDeleteIndex = null;
+    let playerToEditIndex = null;
     let currentTeams = { teamOrange: [], teamBlue: [] };
 
     let bankConfig = {
@@ -505,7 +584,7 @@
         shortName: "Thứ 3",
         pitchFee: 600000,
         waterFee: 80000,
-        gkDiscount: 50, // 50%, 100% or 0%
+        gkDiscount: 50,
         players: INITIAL_PLAYERS.map(name => ({
           name: name,
           isAttending: true,
@@ -553,8 +632,6 @@
       updateCloudUI('connecting', 'Đang kết nối Cloud...');
 
       let config = defaultFirebaseConfig;
-
-      // Kiểm tra cấu hình tùy biến lưu tạm nếu có
       const customConf = localStorage.getItem('sanco_custom_firebase_config');
       if (customConf) {
         try { config = JSON.parse(customConf); } catch(e){}
@@ -572,14 +649,12 @@
         auth = getAuth(app);
         db = getFirestore(app);
 
-        // Đăng nhập xác thực ẩn danh
         try {
           await signInAnonymously(auth);
         } catch (authErr) {
           console.warn("Xác thực ẩn danh:", authErr);
         }
 
-        // Lắng nghe dữ liệu thời gian thực (Real-time listener)
         const dataDocRef = doc(db, 'matches', 'current_week');
 
         onSnapshot(dataDocRef, (docSnap) => {
@@ -590,6 +665,9 @@
             }
             if (data.bankConfig) {
               bankConfig = data.bankConfig;
+            }
+            if (data.captainPin) {
+              captainPin = data.captainPin;
             }
             isCloudReady = true;
             updateCloudUI('live', 'Cloud Trực tuyến');
@@ -620,6 +698,7 @@
       try {
         localStorage.setItem('sanco_matches_cache', JSON.stringify(matches));
         localStorage.setItem('sanco_bank_cache', JSON.stringify(bankConfig));
+        localStorage.setItem('sanco_captain_pin', captainPin);
       } catch(e){}
 
       if (!db || !isCloudReady) return;
@@ -629,6 +708,7 @@
         await setDoc(dataDocRef, {
           matches: matches,
           bankConfig: bankConfig,
+          captainPin: captainPin,
           lastUpdated: new Date().toISOString()
         });
       } catch (err) {
@@ -652,6 +732,8 @@
           if (parsedBank && parsedBank.accountNo) bankConfig = parsedBank;
         } catch(e){}
       }
+      const savedPin = localStorage.getItem('sanco_captain_pin');
+      if (savedPin) captainPin = savedPin;
     }
 
     function updateCloudUI(status, label) {
@@ -702,6 +784,44 @@
       } else {
         showToast("Sai mã PIN! Vui lòng thử lại");
       }
+    };
+
+    window.openChangePinModal = function() {
+      if (currentRole !== 'captain') return;
+      const input = document.getElementById('input-new-pin');
+      input.value = '';
+      input.type = 'password';
+      document.getElementById('pin-eye-icon').className = 'fa-solid fa-eye';
+      document.getElementById('change-pin-modal').classList.remove('hidden');
+      setTimeout(() => input.focus(), 150);
+    };
+
+    window.togglePinVisibility = function() {
+      const input = document.getElementById('input-new-pin');
+      const icon = document.getElementById('pin-eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    };
+
+    window.closeChangePinModal = function() {
+      document.getElementById('change-pin-modal').classList.add('hidden');
+    };
+
+    window.saveNewPin = function() {
+      const newPin = document.getElementById('input-new-pin').value.trim();
+      if (!newPin || newPin.length < 4) {
+        showToast("Mã PIN phải từ 4 đến 6 số!");
+        return;
+      }
+      captainPin = newPin;
+      syncToCloud();
+      window.closeChangePinModal();
+      showToast(`Đã đổi mã PIN thành công! PIN mới: ${newPin}`);
     };
 
     function updateRoleUI() {
@@ -794,7 +914,7 @@
 
           if (p.isGk) {
             gkCount++;
-            outfieldSlots += (p.guestCount || 0); // khách đi cùng thủ môn tính suất người thường
+            outfieldSlots += (p.guestCount || 0);
           } else {
             outfieldSlots += slots;
           }
@@ -806,7 +926,6 @@
       let gkFee = 0;
 
       if (totalSlots > 0) {
-        // Tỷ trọng suất nộp tiền thực tế có xét ưu đãi thủ môn
         const effectivePayingSlots = outfieldSlots + (gkCount * (1 - (gkDisc / 100)));
         if (effectivePayingSlots > 0) {
           feePerPerson = Math.ceil((totalCost / effectivePayingSlots) / 5000) * 5000;
@@ -817,7 +936,22 @@
         }
       }
 
-      return { totalSlots, attendingCount, paidCount, pendingCount, unpaidCount, totalCost, feePerPerson, gkFee, gkDisc };
+      // Tính tổng tiền đã thu & còn thiếu thực tế
+      let collectedMoney = 0;
+      let remainingMoney = 0;
+      m.players.forEach(p => {
+        if (p.isAttending) {
+          const guestSlots = p.guestCount || 0;
+          const individualFee = p.isGk ? (gkFee + guestSlots * feePerPerson) : ((1 + guestSlots) * feePerPerson);
+          if (p.paymentStatus === 'paid') {
+            collectedMoney += individualFee;
+          } else {
+            remainingMoney += individualFee;
+          }
+        }
+      });
+
+      return { totalSlots, attendingCount, paidCount, pendingCount, unpaidCount, totalCost, feePerPerson, gkFee, gkDisc, collectedMoney, remainingMoney };
     }
 
     window.updateFees = function() {
@@ -849,7 +983,10 @@
       document.getElementById('count-paid').textContent = calc.paidCount;
       document.getElementById('count-total-pay').textContent = calc.attendingCount;
 
-      // Cập nhật số đếm trên bộ lọc thanh toán
+      // Cập nhật thống kê tiền thu thực tế
+      document.getElementById('disp-collected-money').textContent = `${calc.collectedMoney.toLocaleString('vi-VN')}đ`;
+      document.getElementById('disp-remaining-money').textContent = `${calc.remainingMoney.toLocaleString('vi-VN')}đ`;
+
       document.getElementById('filt-count-all').textContent = calc.attendingCount;
       document.getElementById('filt-count-unpaid').textContent = calc.unpaidCount;
       document.getElementById('filt-count-pending').textContent = calc.pendingCount;
@@ -874,10 +1011,16 @@
         }`;
 
         let deleteBtnHTML = '';
+        let editNameBtnHTML = '';
         if (currentRole === 'captain') {
           deleteBtnHTML = `
             <button onclick="requestDeletePlayer(${index})" class="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 flex items-center justify-center transition shadow-sm ml-1" title="Xóa người này khỏi trận">
               <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          `;
+          editNameBtnHTML = `
+            <button onclick="openEditPlayerModal(${index})" class="text-slate-400 hover:text-blue-600 px-1 py-0.5 rounded hover:bg-slate-100 transition" title="Đội trưởng: Bấm để đổi tên cầu thủ">
+              <i class="fa-solid fa-pen text-[10px]"></i>
             </button>
           `;
         }
@@ -891,7 +1034,6 @@
           }
         }
 
-        // Nút toggle Thủ Môn (🧤 GK)
         const gkButtonHTML = p.isAttending ? `
           <button onclick="toggleGk(${index})" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold transition flex items-center gap-0.5 ${
             p.isGk ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-400 hover:text-slate-600 border border-slate-200'
@@ -909,7 +1051,8 @@
             </button>
             <div class="truncate">
               <div class="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5 ${p.isAttending ? '' : 'line-through text-slate-400'}">
-                <span>${p.name}</span>
+                <span class="truncate">${p.name}</span>
+                ${editNameBtnHTML}
                 ${tagBadgeHTML}
                 ${gkButtonHTML}
               </div>
@@ -936,6 +1079,76 @@
       });
     }
 
+    window.openEditPlayerModal = function(index) {
+      if (currentRole !== 'captain') return;
+      playerToEditIndex = index;
+      const p = matches[currentMatchIndex].players[index];
+      if (!p) return;
+      document.getElementById('edit-player-name-input').value = p.name;
+      document.getElementById('edit-player-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('edit-player-name-input').focus(), 150);
+    };
+
+    window.closeEditPlayerModal = function() {
+      playerToEditIndex = null;
+      document.getElementById('edit-player-modal').classList.add('hidden');
+    };
+
+    window.saveEditPlayerModal = function() {
+      if (playerToEditIndex === null) return;
+      const newName = document.getElementById('edit-player-name-input').value.trim();
+      if (!newName) {
+        showToast("Tên cầu thủ không được để trống!");
+        return;
+      }
+      const syncBoth = document.getElementById('edit-player-both-matches').checked;
+      const oldName = matches[currentMatchIndex].players[playerToEditIndex].name;
+      
+      matches[currentMatchIndex].players[playerToEditIndex].name = newName;
+
+      if (syncBoth) {
+        const otherMatchIndex = currentMatchIndex === 0 ? 1 : 0;
+        const targetPlayer = matches[otherMatchIndex].players.find(p => p.name === oldName);
+        if (targetPlayer) {
+          targetPlayer.name = newName;
+        }
+      }
+
+      syncToCloud();
+      renderAll();
+      window.closeEditPlayerModal();
+      showToast(`Đã đổi tên thành: ${newName}`);
+    };
+
+    window.syncSquadToOtherMatch = function() {
+      if (currentRole !== 'captain') return;
+      const curMatch = matches[currentMatchIndex];
+      const otherIdx = currentMatchIndex === 0 ? 1 : 0;
+      const otherMatch = matches[otherIdx];
+
+      const officialPlayers = curMatch.players.filter(p => p.addedByCaptain || !p.isGuest);
+      let addedCount = 0;
+
+      officialPlayers.forEach(p => {
+        const exists = otherMatch.players.some(op => op.name === p.name);
+        if (!exists) {
+          otherMatch.players.push({
+            name: p.name,
+            isAttending: false,
+            guestCount: 0,
+            isGk: false,
+            paymentStatus: 'unpaid',
+            isGuest: false,
+            addedByCaptain: true
+          });
+          addedCount++;
+        }
+      });
+
+      syncToCloud();
+      showToast(`Đã đồng bộ ${addedCount} cầu thủ sang ${otherMatch.shortName}!`);
+    };
+
     window.setPaymentFilter = function(filter) {
       paymentFilter = filter;
       ['all', 'unpaid', 'pending', 'paid'].forEach(f => {
@@ -957,7 +1170,6 @@
 
       let attendingPlayers = m.players.filter(p => p.isAttending);
 
-      // Áp dụng bộ lọc
       if (paymentFilter === 'unpaid') {
         attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'unpaid');
       } else if (paymentFilter === 'pending') {
@@ -975,7 +1187,6 @@
         const originalIndex = m.players.findIndex(x => x.name === p.name);
         const guestSlots = p.guestCount || 0;
         
-        // Tính tiền nếu là thủ môn
         let amount = 0;
         if (p.isGk) {
           amount = gkFee + (guestSlots * feePerPerson);
@@ -1187,7 +1398,6 @@
         return;
       }
 
-      // Xây dựng danh sách cầu thủ gồm cả bạn ngoài
       let poolGk = [];
       let poolField = [];
 
@@ -1198,13 +1408,11 @@
           poolField.push({ name: p.name, isGk: false });
         }
 
-        // Thêm bạn đi kèm
         for (let i = 1; i <= (p.guestCount || 0); i++) {
           poolField.push({ name: `Bạn của ${p.name} #${i}`, isGk: false });
         }
       });
 
-      // Xáo trộn ngẫu nhiên (Fisher-Yates)
       const shuffle = (arr) => {
         for (let i = arr.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -1219,13 +1427,11 @@
       const teamOrange = [];
       const teamBlue = [];
 
-      // Chia đều thủ môn trước
       poolGk.forEach((gk, idx) => {
         if (idx % 2 === 0) teamOrange.push(gk.name);
         else teamBlue.push(gk.name);
       });
 
-      // Chia đều cầu thủ sân
       poolField.forEach((player, idx) => {
         if (teamOrange.length <= teamBlue.length) {
           teamOrange.push(player.name);
@@ -1236,7 +1442,6 @@
 
       currentTeams = { teamOrange, teamBlue };
 
-      // Render lên modal
       document.getElementById('count-team-orange').textContent = teamOrange.length;
       document.getElementById('count-team-blue').textContent = teamBlue.length;
       document.getElementById('teams-summary-text').textContent = `Tổng cộng: ${teamOrange.length + teamBlue.length} cầu thủ sẵn sàng thi đấu`;
@@ -1341,19 +1546,21 @@
     };
 
     window.confirmResetMatch = function() {
-      matches[currentMatchIndex].players = INITIAL_PLAYERS.map(name => ({
-        name: name,
-        isAttending: false,
-        guestCount: 0,
-        isGk: false,
-        paymentStatus: 'unpaid',
-        isGuest: false,
-        addedByCaptain: true
-      }));
+      // Giữ nguyên 100% cầu thủ do Đội trưởng thêm & thành viên chính thức; chỉ loại bỏ bạn ngoài do user thêm
+      matches[currentMatchIndex].players = matches[currentMatchIndex].players
+        .filter(p => p.addedByCaptain || !p.isGuest)
+        .map(p => ({
+          ...p,
+          isAttending: false,
+          guestCount: 0,
+          isGk: false,
+          paymentStatus: 'unpaid'
+        }));
+
       syncToCloud();
       renderAll();
       window.closeResetModal();
-      showToast("Đã reset trận thành công!");
+      showToast("Đã reset trận! Giữ nguyên thành viên của Đội trưởng.");
     };
 
     window.copyZaloMsg = function() {
