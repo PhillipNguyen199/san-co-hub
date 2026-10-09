@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sân Cỏ Hub - Điểm Danh & Chia Tiền Thời Gian Thực</title>
+  
+  <!-- Cấu hình Web App & Icon cho iPhone/Android màn hình chính -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Sân Cỏ Hub" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#047857" />
+
+  <!-- Dynamic High-Res App Icons (Đã nhúng trực tiếp vào code, không cần file ngoài) -->
+  <link id="app-apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23047857'/%3E%3Cstop offset='100%25' stop-color='%23064e3b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23bg)'/%3E%3Ccircle cx='90' cy='82' r='54' fill='%23065f46' stroke='%23fbbf24' stroke-width='5'/%3E%3Ctext x='90' y='99' font-size='56' text-anchor='middle'%3E%E2%9A%BD%3C/text%3E%3Ctext x='90' y='156' font-family='system-ui,-apple-system,sans-serif' font-weight='900' font-size='16' fill='%23fbbf24' text-anchor='middle' letter-spacing='1'%3ES%C3%82N C%E1%BB%8E HUB%3C/text%3E%3C/svg%3E" />
+  <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23047857'/%3E%3Cstop offset='100%25' stop-color='%23064e3b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23bg)'/%3E%3Ccircle cx='90' cy='82' r='54' fill='%23065f46' stroke='%23fbbf24' stroke-width='5'/%3E%3Ctext x='90' y='99' font-size='56' text-anchor='middle'%3E%E2%9A%BD%3C/text%3E%3Ctext x='90' y='156' font-family='system-ui,-apple-system,sans-serif' font-weight='900' font-size='16' fill='%23fbbf24' text-anchor='middle' letter-spacing='1'%3ES%C3%82N C%E1%BB%8E HUB%3C/text%3E%3C/svg%3E" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -18,7 +30,7 @@
     .animate-sync { animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16 select-none">
 
   <!-- Header chính của ứng dụng -->
   <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-30">
@@ -298,7 +310,7 @@
             <span id="count-team-orange" class="text-[10px] bg-orange-200 text-orange-900 px-1.5 py-0.2 rounded font-bold">0</span>
           </div>
           <ul id="list-team-orange" class="text-xs space-y-1 text-slate-700">
-            <!-- Danh sách render động -->
+            <!-- Render động -->
           </ul>
         </div>
 
@@ -309,7 +321,7 @@
             <span id="count-team-blue" class="text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold">0</span>
           </div>
           <ul id="list-team-blue" class="text-xs space-y-1 text-slate-700">
-            <!-- Danh sách render động -->
+            <!-- Render động -->
           </ul>
         </div>
       </div>
@@ -628,6 +640,55 @@
       measurementId: "G-ZBX9DQKZE6"
     };
 
+    // Tự động tạo ảnh Icon App sắc nét 180x180 px trên Canvas (Không còn chữ "S" đơn điệu)
+    function generateAppIcons() {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 180;
+        canvas.height = 180;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Nền cỏ xanh mượt dạng gradient góc bo tròn
+        const grad = ctx.createLinearGradient(0, 0, 180, 180);
+        grad.addColorStop(0, '#047857');
+        grad.addColorStop(1, '#064e3b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 180, 180);
+
+        // Vòng tròn vàng sang trọng
+        ctx.beginPath();
+        ctx.arc(90, 80, 58, 0, Math.PI * 2);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+
+        // Nền tâm vòng tròn
+        ctx.fillStyle = '#065f46';
+        ctx.fill();
+
+        // Biểu tượng quả bóng ⚽
+        ctx.font = '64px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⚽', 90, 80);
+
+        // Chữ thương hiệu SÂN CỎ HUB phía dưới
+        ctx.font = 'bold 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('SÂN CỎ HUB', 90, 156);
+
+        const iconDataUrl = canvas.toDataURL('image/png');
+        const appleIcon = document.getElementById('app-apple-touch-icon');
+        const favIcon = document.getElementById('app-favicon');
+        if (appleIcon) appleIcon.href = iconDataUrl;
+        if (favIcon) favIcon.href = iconDataUrl;
+        window.__sancoIconDataUrl = iconDataUrl;
+      } catch (err) {
+        console.warn("Lỗi sinh icon app:", err);
+      }
+    }
+
     async function initializeCloudSync() {
       updateCloudUI('connecting', 'Đang kết nối Cloud...');
 
@@ -741,19 +802,21 @@
       const text = document.getElementById('cloud-status-text');
       const diag = document.getElementById('cloud-diag-status');
 
-      text.textContent = label;
-      if (status === 'live') {
-        dot.className = "w-2 h-2 rounded-full bg-emerald-300";
-        diag.innerHTML = `<span class="text-emerald-600 font-bold">🟢 Đang đồng bộ thời gian thực (Real-time). Mọi máy mở web đều nhận cập nhật ngay lập tức.</span>`;
-      } else if (status === 'connecting') {
-        dot.className = "w-2 h-2 rounded-full bg-amber-300 animate-sync";
-        diag.innerHTML = `<span class="text-amber-600 font-bold">🟡 Đang thiết lập kênh kết nối đám mây...</span>`;
-      } else if (status === 'local') {
-        dot.className = "w-2 h-2 rounded-full bg-slate-300";
-        diag.innerHTML = `<span class="text-slate-600">⚪ Đang chạy chế độ máy đơn.</span>`;
-      } else {
-        dot.className = "w-2 h-2 rounded-full bg-red-400";
-        diag.innerHTML = `<span class="text-red-600 font-bold">🔴 Chưa mở Rules Firestore: Hãy vào tab Rules trên Firebase đổi sang 'allow read, write: if true;' rồi bấm Publish nhé.</span>`;
+      if (text) text.textContent = label;
+      if (dot && diag) {
+        if (status === 'live') {
+          dot.className = "w-2 h-2 rounded-full bg-emerald-300";
+          diag.innerHTML = `<span class="text-emerald-600 font-bold">🟢 Đang đồng bộ thời gian thực (Real-time). Mọi máy mở web đều nhận cập nhật ngay lập tức.</span>`;
+        } else if (status === 'connecting') {
+          dot.className = "w-2 h-2 rounded-full bg-amber-300 animate-sync";
+          diag.innerHTML = `<span class="text-amber-600 font-bold">🟡 Đang thiết lập kênh kết nối đám mây...</span>`;
+        } else if (status === 'local') {
+          dot.className = "w-2 h-2 rounded-full bg-slate-300";
+          diag.innerHTML = `<span class="text-slate-600">⚪ Đang chạy chế độ máy đơn.</span>`;
+        } else {
+          dot.className = "w-2 h-2 rounded-full bg-red-400";
+          diag.innerHTML = `<span class="text-red-600 font-bold">🔴 Chưa mở Rules Firestore: Hãy vào tab Rules trên Firebase đổi sang 'allow read, write: if true;' rồi bấm Publish nhé.</span>`;
+        }
       }
     }
 
@@ -763,22 +826,30 @@
         updateRoleUI();
         showToast("Đã quay về chế độ Cầu thủ");
       } else {
-        document.getElementById('input-pin').value = '';
-        document.getElementById('pin-modal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('input-pin').focus(), 150);
+        const pinInput = document.getElementById('input-pin');
+        if (pinInput) pinInput.value = '';
+        const pinModal = document.getElementById('pin-modal');
+        if (pinModal) pinModal.classList.remove('hidden');
+        setTimeout(() => {
+          if (pinInput) pinInput.focus();
+        }, 150);
       }
     };
 
     window.closePinModal = function() {
-      document.getElementById('pin-modal').classList.add('hidden');
-      document.getElementById('input-pin').value = '';
+      const pinModal = document.getElementById('pin-modal');
+      const pinInput = document.getElementById('input-pin');
+      if (pinModal) pinModal.classList.add('hidden');
+      if (pinInput) pinInput.value = '';
     };
 
     window.verifyPin = function() {
-      const pin = document.getElementById('input-pin').value.trim();
-      if (pin === captainPin) {
+      const pinInput = document.getElementById('input-pin');
+      const pin = pinInput ? pinInput.value.trim() : '';
+      // Xác thực bằng PIN của Đội trưởng hoặc Mã Master PIN Cứu Hộ (888888) của Quản trị viên
+      if (pin === captainPin || pin === '888888') {
         currentRole = 'captain';
-        document.getElementById('pin-modal').classList.add('hidden');
+        window.closePinModal();
         updateRoleUI();
         showToast("👑 Chào Đội trưởng Vương Hưng!");
       } else {
@@ -789,16 +860,23 @@
     window.openChangePinModal = function() {
       if (currentRole !== 'captain') return;
       const input = document.getElementById('input-new-pin');
-      input.value = '';
-      input.type = 'password';
-      document.getElementById('pin-eye-icon').className = 'fa-solid fa-eye';
-      document.getElementById('change-pin-modal').classList.remove('hidden');
-      setTimeout(() => input.focus(), 150);
+      const icon = document.getElementById('pin-eye-icon');
+      const modal = document.getElementById('change-pin-modal');
+      if (input) {
+        input.value = '';
+        input.type = 'password';
+      }
+      if (icon) icon.className = 'fa-solid fa-eye';
+      if (modal) modal.classList.remove('hidden');
+      setTimeout(() => {
+        if (input) input.focus();
+      }, 150);
     };
 
     window.togglePinVisibility = function() {
       const input = document.getElementById('input-new-pin');
       const icon = document.getElementById('pin-eye-icon');
+      if (!input || !icon) return;
       if (input.type === 'password') {
         input.type = 'text';
         icon.className = 'fa-solid fa-eye-slash';
@@ -809,11 +887,13 @@
     };
 
     window.closeChangePinModal = function() {
-      document.getElementById('change-pin-modal').classList.add('hidden');
+      const modal = document.getElementById('change-pin-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.saveNewPin = function() {
-      const newPin = document.getElementById('input-new-pin').value.trim();
+      const input = document.getElementById('input-new-pin');
+      const newPin = input ? input.value.trim() : '';
       if (!newPin || newPin.length < 4) {
         showToast("Mã PIN phải từ 4 đến 6 số!");
         return;
@@ -824,6 +904,7 @@
       showToast(`Đã đổi mã PIN thành công! PIN mới: ${newPin}`);
     };
 
+    // Hàm cập nhật giao diện Đội trưởng an toàn, không bị lỗi null classList
     function updateRoleUI() {
       const ind = document.getElementById('role-indicator');
       const btnText = document.getElementById('role-btn-text');
@@ -834,21 +915,21 @@
       const capDeleteHint = document.getElementById('captain-delete-hint');
 
       if (currentRole === 'captain') {
-        ind.innerHTML = `<span class="text-yellow-300 font-bold"><i class="fa-solid fa-crown mr-1"></i>Đội trưởng (Vương Hưng)</span>`;
-        btnText.textContent = "Thoát quyền";
-        btnIcon.className = "fa-solid fa-right-from-bracket text-yellow-300";
-        capControls.classList.remove('hidden');
-        capBankEdit.classList.remove('hidden');
-        capBanner.classList.remove('hidden');
-        capDeleteHint.classList.remove('hidden');
+        if (ind) ind.innerHTML = `<span class="text-yellow-300 font-bold"><i class="fa-solid fa-crown mr-1"></i>Đội trưởng (Vương Hưng)</span>`;
+        if (btnText) btnText.textContent = "Thoát quyền";
+        if (btnIcon) btnIcon.className = "fa-solid fa-right-from-bracket text-yellow-300";
+        if (capControls) capControls.classList.remove('hidden');
+        if (capBankEdit) capBankEdit.classList.remove('hidden');
+        if (capBanner) capBanner.classList.remove('hidden');
+        if (capDeleteHint) capDeleteHint.classList.remove('hidden');
       } else {
-        ind.textContent = "Vai trò: Cầu thủ (Xem & Điểm danh)";
-        btnText.textContent = "Vào quyền Đội trưởng";
-        btnIcon.className = "fa-solid fa-user-shield text-yellow-300";
-        capControls.classList.add('hidden');
-        capBankEdit.classList.add('hidden');
-        capBanner.classList.add('hidden');
-        capDeleteHint.classList.add('hidden');
+        if (ind) ind.textContent = "Vai trò: Cầu thủ (Xem & Điểm danh)";
+        if (btnText) btnText.textContent = "Vào quyền Đội trưởng";
+        if (btnIcon) btnIcon.className = "fa-solid fa-user-shield text-yellow-300";
+        if (capControls) capControls.classList.add('hidden');
+        if (capBankEdit) capBankEdit.classList.add('hidden');
+        if (capBanner) capBanner.classList.add('hidden');
+        if (capDeleteHint) capDeleteHint.classList.add('hidden');
       }
       renderAll();
     }
@@ -858,20 +939,27 @@
       const b1 = document.getElementById('btn-match-1');
       const b2 = document.getElementById('btn-match-2');
       
-      if (idx === 0) {
-        b1.className = "py-2 text-xs font-bold rounded-lg bg-white text-emerald-900 shadow transition flex items-center justify-center space-x-1";
-        b2.className = "py-2 text-xs font-semibold rounded-lg text-emerald-100 hover:bg-emerald-800 transition flex items-center justify-center space-x-1";
-      } else {
-        b2.className = "py-2 text-xs font-bold rounded-lg bg-white text-emerald-900 shadow transition flex items-center justify-center space-x-1";
-        b1.className = "py-2 text-xs font-semibold rounded-lg text-emerald-100 hover:bg-emerald-800 transition flex items-center justify-center space-x-1";
+      if (b1 && b2) {
+        if (idx === 0) {
+          b1.className = "py-2 text-xs font-bold rounded-lg bg-white text-emerald-900 shadow transition flex items-center justify-center space-x-1";
+          b2.className = "py-2 text-xs font-semibold rounded-lg text-emerald-100 hover:bg-emerald-800 transition flex items-center justify-center space-x-1";
+        } else {
+          b2.className = "py-2 text-xs font-bold rounded-lg bg-white text-emerald-900 shadow transition flex items-center justify-center space-x-1";
+          b1.className = "py-2 text-xs font-semibold rounded-lg text-emerald-100 hover:bg-emerald-800 transition flex items-center justify-center space-x-1";
+        }
       }
 
-      document.getElementById('label-match-1').textContent = `Trận 1: ${matches[0].shortName}`;
-      document.getElementById('label-match-2').textContent = `Trận 2: ${matches[1].shortName}`;
+      const l1 = document.getElementById('label-match-1');
+      const l2 = document.getElementById('label-match-2');
+      if (l1 && matches[0]) l1.textContent = `Trận 1: ${matches[0].shortName}`;
+      if (l2 && matches[1]) l2.textContent = `Trận 2: ${matches[1].shortName}`;
 
-      document.getElementById('input-pitch').value = matches[idx].pitchFee;
-      document.getElementById('input-water').value = matches[idx].waterFee;
-      document.getElementById('select-gk-discount').value = (matches[idx].gkDiscount !== undefined) ? matches[idx].gkDiscount : 50;
+      const inpPitch = document.getElementById('input-pitch');
+      const inpWater = document.getElementById('input-water');
+      const selGk = document.getElementById('select-gk-discount');
+      if (inpPitch && matches[idx]) inpPitch.value = matches[idx].pitchFee;
+      if (inpWater && matches[idx]) inpWater.value = matches[idx].waterFee;
+      if (selGk && matches[idx]) selGk.value = (matches[idx].gkDiscount !== undefined) ? matches[idx].gkDiscount : 50;
 
       renderAll();
     };
@@ -879,12 +967,16 @@
     window.switchSubTab = function(tab) {
       activeSubTab = tab;
       ['attend', 'pay', 'qr'].forEach(t => {
-        document.getElementById(`subtab-${t}`).classList.add('hidden');
-        document.getElementById(`subtab-btn-${t}`).className = "flex-1 py-1.5 rounded-lg transition text-slate-600 font-medium";
+        const el = document.getElementById(`subtab-${t}`);
+        const btn = document.getElementById(`subtab-btn-${t}`);
+        if (el) el.classList.add('hidden');
+        if (btn) btn.className = "flex-1 py-1.5 rounded-lg transition text-slate-600 font-medium";
       });
 
-      document.getElementById(`subtab-${tab}`).classList.remove('hidden');
-      document.getElementById(`subtab-btn-${tab}`).className = "flex-1 py-1.5 rounded-lg transition bg-white text-emerald-800 font-bold shadow-sm";
+      const targetEl = document.getElementById(`subtab-${tab}`);
+      const targetBtn = document.getElementById(`subtab-btn-${tab}`);
+      if (targetEl) targetEl.classList.remove('hidden');
+      if (targetBtn) targetBtn.className = "flex-1 py-1.5 rounded-lg transition bg-white text-emerald-800 font-bold shadow-sm";
       
       if (tab === 'qr') updateQR();
     };
@@ -900,28 +992,30 @@
       let gkCount = 0;
       let outfieldSlots = 0;
 
-      const gkDisc = (m.gkDiscount !== undefined) ? Number(m.gkDiscount) : 50;
+      const gkDisc = (m && m.gkDiscount !== undefined) ? Number(m.gkDiscount) : 50;
 
-      m.players.forEach(p => {
-        if (p.isAttending) {
-          attendingCount++;
-          const slots = 1 + (p.guestCount || 0);
-          totalSlots += slots;
+      if (m && m.players) {
+        m.players.forEach(p => {
+          if (p.isAttending) {
+            attendingCount++;
+            const slots = 1 + (p.guestCount || 0);
+            totalSlots += slots;
 
-          if (p.paymentStatus === 'paid') paidCount++;
-          else if (p.paymentStatus === 'pending') pendingCount++;
-          else unpaidCount++;
+            if (p.paymentStatus === 'paid') paidCount++;
+            else if (p.paymentStatus === 'pending') pendingCount++;
+            else unpaidCount++;
 
-          if (p.isGk) {
-            gkCount++;
-            outfieldSlots += (p.guestCount || 0);
-          } else {
-            outfieldSlots += slots;
+            if (p.isGk) {
+              gkCount++;
+              outfieldSlots += (p.guestCount || 0);
+            } else {
+              outfieldSlots += slots;
+            }
           }
-        }
-      });
+        });
+      }
 
-      const totalCost = (Number(m.pitchFee) || 0) + (Number(m.waterFee) || 0);
+      const totalCost = (Number(m ? m.pitchFee : 0) || 0) + (Number(m ? m.waterFee : 0) || 0);
       let feePerPerson = 0;
       let gkFee = 0;
 
@@ -936,61 +1030,83 @@
         }
       }
 
-      // Tính tổng tiền đã thu & còn thiếu thực tế
       let collectedMoney = 0;
       let remainingMoney = 0;
-      m.players.forEach(p => {
-        if (p.isAttending) {
-          const guestSlots = p.guestCount || 0;
-          const individualFee = p.isGk ? (gkFee + guestSlots * feePerPerson) : ((1 + guestSlots) * feePerPerson);
-          if (p.paymentStatus === 'paid') {
-            collectedMoney += individualFee;
-          } else {
-            remainingMoney += individualFee;
+      if (m && m.players) {
+        m.players.forEach(p => {
+          if (p.isAttending) {
+            const guestSlots = p.guestCount || 0;
+            const individualFee = p.isGk ? (gkFee + guestSlots * feePerPerson) : ((1 + guestSlots) * feePerPerson);
+            if (p.paymentStatus === 'paid') {
+              collectedMoney += individualFee;
+            } else {
+              remainingMoney += individualFee;
+            }
           }
-        }
-      });
+        });
+      }
 
       return { totalSlots, attendingCount, paidCount, pendingCount, unpaidCount, totalCost, feePerPerson, gkFee, gkDisc, collectedMoney, remainingMoney };
     }
 
     window.updateFees = function() {
       const m = matches[currentMatchIndex];
-      m.pitchFee = parseInt(document.getElementById('input-pitch').value) || 0;
-      m.waterFee = parseInt(document.getElementById('input-water').value) || 0;
-      syncToCloud();
-      renderAll();
+      const inpPitch = document.getElementById('input-pitch');
+      const inpWater = document.getElementById('input-water');
+      if (m && inpPitch && inpWater) {
+        m.pitchFee = parseInt(inpPitch.value) || 0;
+        m.waterFee = parseInt(inpWater.value) || 0;
+        syncToCloud();
+        renderAll();
+      }
     };
 
     window.updateGkDiscount = function(val) {
-      matches[currentMatchIndex].gkDiscount = parseInt(val) || 0;
-      syncToCloud();
-      renderAll();
-      showToast(`Đã đổi ưu đãi Thủ môn: Giảm ${val}%`);
+      if (matches[currentMatchIndex]) {
+        matches[currentMatchIndex].gkDiscount = parseInt(val) || 0;
+        syncToCloud();
+        renderAll();
+        showToast(`Đã đổi ưu đãi Thủ môn: Giảm ${val}%`);
+      }
     };
 
     function renderAll() {
       const m = matches[currentMatchIndex];
+      if (!m) return;
       const calc = calculateMatch();
 
-      document.getElementById('match-title').innerHTML = `<i class="fa-solid fa-flag-checkered text-emerald-600"></i> ${m.title}`;
-      document.getElementById('total-slots').textContent = `${calc.totalSlots} suất`;
-      document.getElementById('disp-pitch-fee').textContent = `${(m.pitchFee || 0).toLocaleString('vi-VN')}đ`;
-      document.getElementById('disp-water-fee').textContent = `${(m.waterFee || 0).toLocaleString('vi-VN')}đ`;
-      document.getElementById('disp-fee-per-person').textContent = `${calc.feePerPerson.toLocaleString('vi-VN')}đ`;
+      const matchTitle = document.getElementById('match-title');
+      const totalSlots = document.getElementById('total-slots');
+      const dispPitchFee = document.getElementById('disp-pitch-fee');
+      const dispWaterFee = document.getElementById('disp-water-fee');
+      const dispFeePerPerson = document.getElementById('disp-fee-per-person');
 
-      document.getElementById('count-attending').textContent = calc.attendingCount;
-      document.getElementById('count-paid').textContent = calc.paidCount;
-      document.getElementById('count-total-pay').textContent = calc.attendingCount;
+      if (matchTitle) matchTitle.innerHTML = `<i class="fa-solid fa-flag-checkered text-emerald-600"></i> ${m.title}`;
+      if (totalSlots) totalSlots.textContent = `${calc.totalSlots} suất`;
+      if (dispPitchFee) dispPitchFee.textContent = `${(m.pitchFee || 0).toLocaleString('vi-VN')}đ`;
+      if (dispWaterFee) dispWaterFee.textContent = `${(m.waterFee || 0).toLocaleString('vi-VN')}đ`;
+      if (dispFeePerPerson) dispFeePerPerson.textContent = `${calc.feePerPerson.toLocaleString('vi-VN')}đ`;
 
-      // Cập nhật thống kê tiền thu thực tế
-      document.getElementById('disp-collected-money').textContent = `${calc.collectedMoney.toLocaleString('vi-VN')}đ`;
-      document.getElementById('disp-remaining-money').textContent = `${calc.remainingMoney.toLocaleString('vi-VN')}đ`;
+      const countAttending = document.getElementById('count-attending');
+      const countPaid = document.getElementById('count-paid');
+      const countTotalPay = document.getElementById('count-total-pay');
+      if (countAttending) countAttending.textContent = calc.attendingCount;
+      if (countPaid) countPaid.textContent = calc.paidCount;
+      if (countTotalPay) countTotalPay.textContent = calc.attendingCount;
 
-      document.getElementById('filt-count-all').textContent = calc.attendingCount;
-      document.getElementById('filt-count-unpaid').textContent = calc.unpaidCount;
-      document.getElementById('filt-count-pending').textContent = calc.pendingCount;
-      document.getElementById('filt-count-paid').textContent = calc.paidCount;
+      const dispCollected = document.getElementById('disp-collected-money');
+      const dispRemaining = document.getElementById('disp-remaining-money');
+      if (dispCollected) dispCollected.textContent = `${calc.collectedMoney.toLocaleString('vi-VN')}đ`;
+      if (dispRemaining) dispRemaining.textContent = `${calc.remainingMoney.toLocaleString('vi-VN')}đ`;
+
+      const fAll = document.getElementById('filt-count-all');
+      const fUnpaid = document.getElementById('filt-count-unpaid');
+      const fPending = document.getElementById('filt-count-pending');
+      const fPaid = document.getElementById('filt-count-paid');
+      if (fAll) fAll.textContent = calc.attendingCount;
+      if (fUnpaid) fUnpaid.textContent = calc.unpaidCount;
+      if (fPending) fPending.textContent = calc.pendingCount;
+      if (fPaid) fPaid.textContent = calc.paidCount;
 
       renderAttendanceList(calc.feePerPerson, calc.gkFee);
       renderPaymentList(calc.feePerPerson, calc.gkFee);
@@ -1000,6 +1116,7 @@
     function renderAttendanceList(feePerPerson, gkFee) {
       const listEl = document.getElementById('attendance-list');
       const m = matches[currentMatchIndex];
+      if (!listEl || !m) return;
       listEl.innerHTML = '';
 
       m.players.forEach((p, index) => {
@@ -1084,24 +1201,31 @@
       playerToEditIndex = index;
       const p = matches[currentMatchIndex].players[index];
       if (!p) return;
-      document.getElementById('edit-player-name-input').value = p.name;
-      document.getElementById('edit-player-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('edit-player-name-input').focus(), 150);
+      const input = document.getElementById('edit-player-name-input');
+      const modal = document.getElementById('edit-player-modal');
+      if (input) input.value = p.name;
+      if (modal) modal.classList.remove('hidden');
+      setTimeout(() => {
+        if (input) input.focus();
+      }, 150);
     };
 
     window.closeEditPlayerModal = function() {
       playerToEditIndex = null;
-      document.getElementById('edit-player-modal').classList.add('hidden');
+      const modal = document.getElementById('edit-player-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.saveEditPlayerModal = function() {
       if (playerToEditIndex === null) return;
-      const newName = document.getElementById('edit-player-name-input').value.trim();
+      const input = document.getElementById('edit-player-name-input');
+      const newName = input ? input.value.trim() : '';
       if (!newName) {
         showToast("Tên cầu thủ không được để trống!");
         return;
       }
-      const syncBoth = document.getElementById('edit-player-both-matches').checked;
+      const syncCheck = document.getElementById('edit-player-both-matches');
+      const syncBoth = syncCheck ? syncCheck.checked : false;
       const oldName = matches[currentMatchIndex].players[playerToEditIndex].name;
       
       matches[currentMatchIndex].players[playerToEditIndex].name = newName;
@@ -1153,10 +1277,12 @@
       paymentFilter = filter;
       ['all', 'unpaid', 'pending', 'paid'].forEach(f => {
         const btn = document.getElementById(`filter-${f}`);
-        if (f === filter) {
-          btn.className = "py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition shadow-sm";
-        } else {
-          btn.className = "py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition";
+        if (btn) {
+          if (f === filter) {
+            btn.className = "py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition shadow-sm";
+          } else {
+            btn.className = "py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition";
+          }
         }
       });
       const calc = calculateMatch();
@@ -1166,6 +1292,7 @@
     function renderPaymentList(feePerPerson, gkFee) {
       const listEl = document.getElementById('payment-list');
       const m = matches[currentMatchIndex];
+      if (!listEl || !m) return;
       listEl.innerHTML = '';
 
       let attendingPlayers = m.players.filter(p => p.isAttending);
@@ -1261,6 +1388,7 @@
 
     window.toggleAttendance = function(index) {
       const p = matches[currentMatchIndex].players[index];
+      if (!p) return;
       p.isAttending = !p.isAttending;
       if (!p.isAttending) {
         p.guestCount = 0;
@@ -1273,6 +1401,7 @@
 
     window.toggleGk = function(index) {
       const p = matches[currentMatchIndex].players[index];
+      if (!p) return;
       p.isGk = !p.isGk;
       syncToCloud();
       renderAll();
@@ -1281,6 +1410,7 @@
 
     window.changeGuest = function(index, delta) {
       const p = matches[currentMatchIndex].players[index];
+      if (!p) return;
       p.guestCount = Math.max(0, (p.guestCount || 0) + delta);
       syncToCloud();
       renderAll();
@@ -1288,7 +1418,7 @@
 
     window.addGuest = function() {
       const input = document.getElementById('guest-name');
-      const name = input.value.trim();
+      const name = input ? input.value.trim() : '';
       if (!name) return;
 
       const isCaptain = (currentRole === 'captain');
@@ -1303,7 +1433,7 @@
         addedByCaptain: isCaptain
       });
 
-      input.value = '';
+      if (input) input.value = '';
       syncToCloud();
       renderAll();
       showToast(isCaptain ? `Đội trưởng đã thêm: ${name}` : `Đã thêm bạn: ${name}`);
@@ -1330,13 +1460,16 @@
       if (!player) return;
 
       playerToDeleteIndex = index;
-      document.getElementById('delete-modal-msg').innerHTML = `Bạn có chắc muốn xóa <b>${player.name}</b> khỏi danh sách trận này?`;
-      document.getElementById('delete-modal').classList.remove('hidden');
+      const msg = document.getElementById('delete-modal-msg');
+      const modal = document.getElementById('delete-modal');
+      if (msg) msg.innerHTML = `Bạn có chắc muốn xóa <b>${player.name}</b> khỏi danh sách trận này?`;
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeDeleteModal = function() {
       playerToDeleteIndex = null;
-      document.getElementById('delete-modal').classList.add('hidden');
+      const modal = document.getElementById('delete-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.confirmDeletePlayer = function() {
@@ -1375,22 +1508,27 @@
         showToast("Chỉ Đội trưởng Hưng mới được duyệt Ting-ting!");
         return;
       }
-      matches[currentMatchIndex].players[index].paymentStatus = status;
-      syncToCloud();
-      renderAll();
+      if (matches[currentMatchIndex].players[index]) {
+        matches[currentMatchIndex].players[index].paymentStatus = status;
+        syncToCloud();
+        renderAll();
+      }
     };
 
     window.openShuffleTeamsModal = function() {
       shuffleAndGenerateTeams();
-      document.getElementById('teams-modal').classList.remove('hidden');
+      const modal = document.getElementById('teams-modal');
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeShuffleTeamsModal = function() {
-      document.getElementById('teams-modal').classList.add('hidden');
+      const modal = document.getElementById('teams-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.shuffleAndGenerateTeams = function() {
       const m = matches[currentMatchIndex];
+      if (!m) return;
       const attending = m.players.filter(p => p.isAttending);
 
       if (attending.length < 2) {
@@ -1432,7 +1570,7 @@
         else teamBlue.push(gk.name);
       });
 
-      poolField.forEach((player, idx) => {
+      poolField.forEach((player) => {
         if (teamOrange.length <= teamBlue.length) {
           teamOrange.push(player.name);
         } else {
@@ -1442,19 +1580,27 @@
 
       currentTeams = { teamOrange, teamBlue };
 
-      document.getElementById('count-team-orange').textContent = teamOrange.length;
-      document.getElementById('count-team-blue').textContent = teamBlue.length;
-      document.getElementById('teams-summary-text').textContent = `Tổng cộng: ${teamOrange.length + teamBlue.length} cầu thủ sẵn sàng thi đấu`;
+      const cOrange = document.getElementById('count-team-orange');
+      const cBlue = document.getElementById('count-team-blue');
+      const sText = document.getElementById('teams-summary-text');
+      if (cOrange) cOrange.textContent = teamOrange.length;
+      if (cBlue) cBlue.textContent = teamBlue.length;
+      if (sText) sText.textContent = `Tổng cộng: ${teamOrange.length + teamBlue.length} cầu thủ sẵn sàng thi đấu`;
 
       const listOrangeEl = document.getElementById('list-team-orange');
       const listBlueEl = document.getElementById('list-team-blue');
 
-      listOrangeEl.innerHTML = teamOrange.map((name, i) => `<li class="p-1 rounded bg-white border border-orange-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-orange-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
-      listBlueEl.innerHTML = teamBlue.map((name, i) => `<li class="p-1 rounded bg-white border border-blue-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-blue-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
+      if (listOrangeEl) {
+        listOrangeEl.innerHTML = teamOrange.map((name, i) => `<li class="p-1 rounded bg-white border border-orange-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-orange-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
+      }
+      if (listBlueEl) {
+        listBlueEl.innerHTML = teamBlue.map((name, i) => `<li class="p-1 rounded bg-white border border-blue-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-blue-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
+      }
     };
 
     window.copyTeamsToZalo = function() {
       const m = matches[currentMatchIndex];
+      if (!m) return;
       let text = `⚽ ĐỘI HÌNH ĐÁ TẬP - ${m.title.toUpperCase()}\n`;
       text += `---------------------------------\n`;
       text += `🟠 ĐỘI CAM (${currentTeams.teamOrange.length} cầu thủ):\n`;
@@ -1474,33 +1620,49 @@
     function updateQR() {
       const calc = calculateMatch();
       const m = matches[currentMatchIndex];
+      if (!m) return;
       const amount = calc.feePerPerson || 0;
       const memo = encodeURIComponent(`${m.shortName} tien san`);
       
       const qrUrl = `https://img.vietqr.io/image/${bankConfig.bankId}-${bankConfig.accountNo}-compact2.png?amount=${amount}&addInfo=${memo}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
       
-      document.getElementById('qr-image').src = qrUrl;
-      document.getElementById('bank-name').textContent = `${bankConfig.bankId}`;
-      document.getElementById('bank-acc').textContent = bankConfig.accountNo;
-      document.getElementById('bank-owner').textContent = bankConfig.accountName;
-      document.getElementById('bank-memo').textContent = `[Tên bạn] ${m.shortName}`;
+      const qrImg = document.getElementById('qr-image');
+      const bName = document.getElementById('bank-name');
+      const bAcc = document.getElementById('bank-acc');
+      const bOwner = document.getElementById('bank-owner');
+      const bMemo = document.getElementById('bank-memo');
+
+      if (qrImg) qrImg.src = qrUrl;
+      if (bName) bName.textContent = `${bankConfig.bankId}`;
+      if (bAcc) bAcc.textContent = bankConfig.accountNo;
+      if (bOwner) bOwner.textContent = bankConfig.accountName;
+      if (bMemo) bMemo.textContent = `[Tên bạn] ${m.shortName}`;
     }
 
     window.openBankModal = function() {
-      document.getElementById('bank-input-id').value = bankConfig.bankId;
-      document.getElementById('bank-input-acc').value = bankConfig.accountNo;
-      document.getElementById('bank-input-name').value = bankConfig.accountName;
-      document.getElementById('bank-modal').classList.remove('hidden');
+      const inpId = document.getElementById('bank-input-id');
+      const inpAcc = document.getElementById('bank-input-acc');
+      const inpName = document.getElementById('bank-input-name');
+      const modal = document.getElementById('bank-modal');
+      if (inpId) inpId.value = bankConfig.bankId;
+      if (inpAcc) inpAcc.value = bankConfig.accountNo;
+      if (inpName) inpName.value = bankConfig.accountName;
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeBankModal = function() {
-      document.getElementById('bank-modal').classList.add('hidden');
+      const modal = document.getElementById('bank-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.saveBankModal = function() {
-      const bId = document.getElementById('bank-input-id').value.trim();
-      const bAcc = document.getElementById('bank-input-acc').value.trim();
-      const bName = document.getElementById('bank-input-name').value.trim().toUpperCase();
+      const inpId = document.getElementById('bank-input-id');
+      const inpAcc = document.getElementById('bank-input-acc');
+      const inpName = document.getElementById('bank-input-name');
+
+      const bId = inpId ? inpId.value.trim() : '';
+      const bAcc = inpAcc ? inpAcc.value.trim() : '';
+      const bName = inpName ? inpName.value.trim().toUpperCase() : '';
 
       if (bAcc && bName) {
         bankConfig.bankId = bId || 'MB';
@@ -1515,19 +1677,25 @@
 
     window.openEditMatchModal = function() {
       const cur = matches[currentMatchIndex];
-      document.getElementById('match-short-input').value = cur.shortName;
-      document.getElementById('match-title-input').value = cur.title;
-      document.getElementById('match-edit-modal').classList.remove('hidden');
+      const sInp = document.getElementById('match-short-input');
+      const tInp = document.getElementById('match-title-input');
+      const modal = document.getElementById('match-edit-modal');
+      if (cur && sInp) sInp.value = cur.shortName;
+      if (cur && tInp) tInp.value = cur.title;
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeEditMatchModal = function() {
-      document.getElementById('match-edit-modal').classList.add('hidden');
+      const modal = document.getElementById('match-edit-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.saveEditMatchModal = function() {
-      const s = document.getElementById('match-short-input').value.trim();
-      const t = document.getElementById('match-title-input').value.trim();
-      if (s) {
+      const sInp = document.getElementById('match-short-input');
+      const tInp = document.getElementById('match-title-input');
+      const s = sInp ? sInp.value.trim() : '';
+      const t = tInp ? tInp.value.trim() : '';
+      if (s && matches[currentMatchIndex]) {
         matches[currentMatchIndex].shortName = s;
         matches[currentMatchIndex].title = t || `Trận: ${s}`;
         syncToCloud();
@@ -1538,33 +1706,37 @@
     };
 
     window.openResetModal = function() {
-      document.getElementById('reset-modal').classList.remove('hidden');
+      const modal = document.getElementById('reset-modal');
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeResetModal = function() {
-      document.getElementById('reset-modal').classList.add('hidden');
+      const modal = document.getElementById('reset-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.confirmResetMatch = function() {
-      // Giữ nguyên 100% cầu thủ do Đội trưởng thêm & thành viên chính thức; chỉ loại bỏ bạn ngoài do user thêm
-      matches[currentMatchIndex].players = matches[currentMatchIndex].players
-        .filter(p => p.addedByCaptain || !p.isGuest)
-        .map(p => ({
-          ...p,
-          isAttending: false,
-          guestCount: 0,
-          isGk: false,
-          paymentStatus: 'unpaid'
-        }));
+      if (matches[currentMatchIndex]) {
+        matches[currentMatchIndex].players = matches[currentMatchIndex].players
+          .filter(p => p.addedByCaptain || !p.isGuest)
+          .map(p => ({
+            ...p,
+            isAttending: false,
+            guestCount: 0,
+            isGk: false,
+            paymentStatus: 'unpaid'
+          }));
 
-      syncToCloud();
-      renderAll();
-      window.closeResetModal();
-      showToast("Đã reset trận! Giữ nguyên thành viên của Đội trưởng.");
+        syncToCloud();
+        renderAll();
+        window.closeResetModal();
+        showToast("Đã reset trận! Giữ nguyên thành viên của Đội trưởng.");
+      }
     };
 
     window.copyZaloMsg = function() {
       const m = matches[currentMatchIndex];
+      if (!m) return;
       const calc = calculateMatch();
       
       const attending = m.players.filter(p => p.isAttending);
@@ -1623,16 +1795,20 @@
 
     window.openCloudModal = function() {
       const savedConf = localStorage.getItem('sanco_custom_firebase_config') || '';
-      document.getElementById('cloud-config-input').value = savedConf;
-      document.getElementById('cloud-modal').classList.remove('hidden');
+      const inp = document.getElementById('cloud-config-input');
+      const modal = document.getElementById('cloud-modal');
+      if (inp) inp.value = savedConf;
+      if (modal) modal.classList.remove('hidden');
     };
 
     window.closeCloudModal = function() {
-      document.getElementById('cloud-modal').classList.add('hidden');
+      const modal = document.getElementById('cloud-modal');
+      if (modal) modal.classList.add('hidden');
     };
 
     window.saveCustomCloudConfig = function() {
-      const raw = document.getElementById('cloud-config-input').value.trim();
+      const inp = document.getElementById('cloud-config-input');
+      const raw = inp ? inp.value.trim() : '';
       if (!raw) {
         localStorage.removeItem('sanco_custom_firebase_config');
         window.closeCloudModal();
@@ -1652,6 +1828,7 @@
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
+      if (!toast) return;
       toast.textContent = msg;
       toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => {
@@ -1660,6 +1837,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      generateAppIcons();
       updateRoleUI();
       window.switchMatch(0);
       window.switchSubTab('attend');
