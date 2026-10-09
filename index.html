@@ -64,7 +64,7 @@
     <div id="captain-banner" class="hidden bg-amber-500 text-white p-2.5 rounded-xl shadow-sm text-xs flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-crown text-yellow-200 text-sm"></i>
-        <span><b>Chế độ Đội trưởng (Hưng):</b> Bạn có quyền xóa cầu thủ <i class="fa-solid fa-trash-can text-red-200"></i>, đổi tiền sân & duyệt Ting-ting.</span>
+        <span><b>Chế độ Đội trưởng (Hưng):</b> Bạn có quyền xóa cầu thủ <i class="fa-solid fa-trash-can text-red-200"></i>, đổi tiền sân, ưu đãi gôn & duyệt Ting-ting.</span>
       </div>
     </div>
 
@@ -99,7 +99,7 @@
         </div>
       </div>
 
-      <!-- Bảng điều khiển riêng của Đội trưởng Hưng (Chỉ hiện khi nhập PIN) -->
+      <!-- Bảng điều khiển riêng của Đội trưởng Hưng (Chỉ hiện khi nhập PIN 2026) -->
       <div id="captain-controls" class="hidden mt-3 pt-3 border-t border-dashed border-slate-200 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-amber-700 flex items-center gap-1">
@@ -119,6 +119,19 @@
             <input type="number" id="input-water" step="5000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 80000" onchange="updateFees()" />
           </div>
         </div>
+
+        <!-- Cấu hình ưu đãi Thủ Môn (GK) -->
+        <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
+          <span class="text-slate-700 font-medium flex items-center gap-1">
+            🧤 Ưu đãi Thủ môn (GK):
+          </span>
+          <select id="select-gk-discount" onchange="updateGkDiscount(this.value)" class="text-xs p-1 bg-white border border-slate-300 rounded font-semibold text-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <option value="50">Giảm 50% tiền sân</option>
+            <option value="100">Miễn phí 100% (Free)</option>
+            <option value="0">Không giảm (Đóng đủ)</option>
+          </select>
+        </div>
+
         <div class="flex gap-2 pt-1">
           <button onclick="copyZaloMsg()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-share-nodes"></i> Copy gửi nhóm Zalo
@@ -133,7 +146,7 @@
       </div>
     </div>
 
-    <!-- Thanh chuyển 3 Tab chức năng -->
+    <!-- Thanh chuyển 3 Tab chức năng chính -->
     <div class="flex bg-slate-200/80 p-1 rounded-xl text-xs font-semibold">
       <button id="subtab-btn-attend" onclick="switchSubTab('attend')" class="flex-1 py-1.5 rounded-lg transition text-slate-700">
         <i class="fa-solid fa-user-check mr-1"></i> Điểm danh (<span id="count-attending">0</span>)
@@ -148,17 +161,24 @@
 
     <!-- VIEW 1: ĐIỂM DANH & QUẢN LÝ QUÂN SỐ -->
     <div id="subtab-attend" class="space-y-2">
-      <!-- Ô thêm thành viên: BẤT KỲ AI CŨNG CÓ THỂ THÊM BẠN -->
-      <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex gap-2 shadow-sm">
-        <input type="text" id="guest-name" placeholder="Rủ thêm bạn ngoài hoặc thêm cầu thủ..." class="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" onkeydown="if(event.key==='Enter') addGuest()" />
-        <button onclick="addGuest()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap flex items-center gap-1 shadow-sm">
-          <i class="fa-solid fa-user-plus text-xs"></i> Thêm bạn
+      <!-- Ô thêm thành viên & Nút chia 2 đội -->
+      <div class="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-sm">
+        <div class="flex gap-2">
+          <input type="text" id="guest-name" placeholder="Rủ thêm bạn ngoài hoặc thêm cầu thủ..." class="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" onkeydown="if(event.key==='Enter') addGuest()" />
+          <button onclick="addGuest()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap flex items-center gap-1 shadow-sm">
+            <i class="fa-solid fa-user-plus text-xs"></i> Thêm bạn
+          </button>
+        </div>
+
+        <!-- Nút Chia 2 Đội Ngẫu Nhiên -->
+        <button onclick="openShuffleTeamsModal()" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold py-2 rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-dice text-sm"></i> Chia 2 đội đá tập (Đội Cam vs Đội Xanh)
         </button>
       </div>
 
       <!-- Hướng dẫn xóa dành riêng cho Đội trưởng -->
       <div id="captain-delete-hint" class="hidden text-[11px] text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg flex items-center justify-between">
-        <span><i class="fa-solid fa-circle-info mr-1"></i>Bấm biểu tượng thùng rác màu đỏ <i class="fa-solid fa-trash-can text-red-500 mx-0.5"></i> bên cạnh để xóa người khỏi danh sách.</span>
+        <span><i class="fa-solid fa-circle-info mr-1"></i>Bấm biểu tượng thùng rác màu đỏ <i class="fa-solid fa-trash-can text-red-500 mx-0.5"></i> để xóa người.</span>
       </div>
 
       <!-- Danh sách cầu thủ điểm danh -->
@@ -167,14 +187,32 @@
       </div>
     </div>
 
-    <!-- VIEW 2: TRẠNG THÁI NỘP TIỀN SÂN -->
+    <!-- VIEW 2: TRẠNG THÁI NỘP TIỀN SÂN KÈM BỘ LỌC THÔNG MINH -->
     <div id="subtab-pay" class="hidden space-y-2">
       <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-xs text-amber-800 flex items-start gap-2 shadow-sm">
         <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
         <div>
-          Anh em chuyển khoản xong thì bấm <b>"Tôi đã chuyển"</b>. Đội trưởng Hưng kiểm tra ting-ting sẽ bấm duyệt nhé!
+          Anh em chuyển khoản xong bấm <b>"Tôi đã chuyển"</b>. Đội trưởng Hưng kiểm tra ting-ting sẽ bấm duyệt nhé!
         </div>
       </div>
+
+      <!-- Bộ lọc trạng thái nộp tiền (Dành cho Hưng và anh em) -->
+      <div class="grid grid-cols-4 gap-1 bg-white p-1 rounded-xl border border-slate-200 text-[11px] font-semibold text-center shadow-sm">
+        <button id="filter-all" onclick="setPaymentFilter('all')" class="py-1.5 rounded-lg bg-emerald-600 text-white transition">
+          Tất cả (<span id="filt-count-all">0</span>)
+        </button>
+        <button id="filter-unpaid" onclick="setPaymentFilter('unpaid')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
+          Chưa đóng (<span id="filt-count-unpaid">0</span>)
+        </button>
+        <button id="filter-pending" onclick="setPaymentFilter('pending')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
+          Chờ duyệt (<span id="filt-count-pending">0</span>)
+        </button>
+        <button id="filter-paid" onclick="setPaymentFilter('paid')" class="py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition">
+          Đã duyệt (<span id="filt-count-paid">0</span>)
+        </button>
+      </div>
+
+      <!-- Danh sách thanh toán được lọc -->
       <div class="space-y-1.5" id="payment-list">
         <!-- Render động danh sách thanh toán -->
       </div>
@@ -190,9 +228,14 @@
           <img id="qr-image" src="" alt="VietQR" class="w-56 h-auto rounded-xl shadow border border-slate-100" />
         </div>
 
-        <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-left space-y-1 text-slate-600">
+        <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-left space-y-1.5 text-slate-600">
           <div><b>Ngân hàng:</b> <span id="bank-name">MB Bank (Quân Đội)</span></div>
-          <div><b>Số tài khoản:</b> <span id="bank-acc" class="font-mono font-bold text-slate-900">0938123456</span></div>
+          <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+            <div><b>Số tài khoản:</b> <span id="bank-acc" class="font-mono font-bold text-slate-900 text-sm">0938123456</span></div>
+            <button onclick="copyBankAcc()" class="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-md font-semibold transition flex items-center gap-1 shadow-sm">
+              <i class="fa-regular fa-copy"></i> Copy STK
+            </button>
+          </div>
           <div><b>Chủ tài khoản:</b> <span id="bank-owner" class="font-bold">VUONG HUNG</span></div>
           <div><b>Nội dung CK:</b> <span id="bank-memo" class="text-emerald-700 font-semibold">[Tên bạn] da banh</span></div>
         </div>
@@ -207,8 +250,61 @@
 
   </main>
 
+  <!-- MODAL CHIA 2 ĐỘI NGẪU NHIÊN (ĐỘI CAM VS ĐỘI XANH) -->
+  <div id="teams-modal" onclick="if(event.target===this) closeShuffleTeamsModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b pb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🎲</span>
+          <h3 class="font-bold text-slate-800 text-sm">Chia 2 Đội Ngẫu Nhiên</h3>
+        </div>
+        <button onclick="closeShuffleTeamsModal()" class="text-slate-400 hover:text-slate-600 text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="text-[11px] text-slate-500" id="teams-summary-text">
+        Đang chia quân cho các cầu thủ đã điểm danh...
+      </div>
+
+      <!-- Danh sách 2 đội -->
+      <div class="grid grid-cols-2 gap-2 overflow-y-auto pr-1 flex-1 py-1">
+        <!-- Đội Cam -->
+        <div class="bg-orange-50 border border-orange-200 rounded-xl p-2.5 space-y-1.5">
+          <div class="font-bold text-xs text-orange-800 flex items-center justify-between border-b border-orange-200 pb-1">
+            <span>🟠 ĐỘI CAM</span>
+            <span id="count-team-orange" class="text-[10px] bg-orange-200 text-orange-900 px-1.5 py-0.2 rounded font-bold">0</span>
+          </div>
+          <ul id="list-team-orange" class="text-xs space-y-1 text-slate-700">
+            <!-- Danh sách render động -->
+          </ul>
+        </div>
+
+        <!-- Đội Xanh -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-2.5 space-y-1.5">
+          <div class="font-bold text-xs text-blue-800 flex items-center justify-between border-b border-blue-200 pb-1">
+            <span>🔵 ĐỘI XANH</span>
+            <span id="count-team-blue" class="text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-bold">0</span>
+          </div>
+          <ul id="list-team-blue" class="text-xs space-y-1 text-slate-700">
+            <!-- Danh sách render động -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2 border-t">
+        <button onclick="shuffleAndGenerateTeams()" class="flex-1 py-2 text-xs font-bold text-orange-700 bg-orange-100 hover:bg-orange-200 rounded-xl transition flex items-center justify-center gap-1">
+          <i class="fa-solid fa-arrows-rotate"></i> Xáo lại
+        </button>
+        <button onclick="copyTeamsToZalo()" class="flex-1 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
+          <i class="fa-solid fa-share-nodes"></i> Copy gửi Zalo
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL NHẬP MÃ PIN ĐỘI TRƯỞNG (PIN: 2026) -->
-  <div id="pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="pin-modal" onclick="if(event.target===this) closePinModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-xl">
       <div class="text-center space-y-1">
         <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-lg font-bold">
@@ -221,7 +317,7 @@
       <input type="password" id="input-pin" maxlength="6" placeholder="Nhập mã PIN" class="w-full text-center tracking-widest text-lg font-bold py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500" onkeydown="if(event.key==='Enter') verifyPin()" />
 
       <div class="flex gap-2">
-        <button onclick="toggleRoleModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+        <button onclick="closePinModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
           Hủy
         </button>
         <button onclick="verifyPin()" class="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition">
@@ -232,7 +328,7 @@
   </div>
 
   <!-- MODAL XÁC NHẬN XÓA CẦU THỦ -->
-  <div id="delete-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="delete-modal" onclick="if(event.target===this) closeDeleteModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-xl">
       <div class="text-center space-y-1">
         <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-lg font-bold">
@@ -254,7 +350,7 @@
   </div>
 
   <!-- MODAL XÁC NHẬN RESET TRẬN ĐẤU -->
-  <div id="reset-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="reset-modal" onclick="if(event.target===this) closeResetModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-4 shadow-xl">
       <div class="text-center space-y-1">
         <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-lg font-bold">
@@ -276,7 +372,7 @@
   </div>
 
   <!-- MODAL CẤU HÌNH TÀI KHOẢN NGÂN HÀNG CỦA HƯNG -->
-  <div id="bank-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="bank-modal" onclick="if(event.target===this) closeBankModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-xl">
       <div class="text-center space-y-1">
         <h3 class="font-bold text-slate-800 text-sm">Tài khoản VietQR của Hưng</h3>
@@ -306,7 +402,7 @@
   </div>
 
   <!-- MODAL ĐỔI TÊN / THỨ CỦA TRẬN -->
-  <div id="match-edit-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="match-edit-modal" onclick="if(event.target===this) closeEditMatchModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 shadow-xl">
       <div class="text-center space-y-1">
         <h3 class="font-bold text-slate-800 text-sm">Đổi tên / Lịch trận</h3>
@@ -332,7 +428,7 @@
   </div>
 
   <!-- MODAL TRẠNG THÁI & CẤU HÌNH ĐỒNG BỘ ĐÁM MÂY (FIREBASE) -->
-  <div id="cloud-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div id="cloud-modal" onclick="if(event.target===this) closeCloudModal()" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-xl text-xs">
       <div class="flex items-center space-x-2 text-emerald-700 font-bold text-sm border-b pb-2">
         <i class="fa-solid fa-cloud-arrow-up text-base"></i>
@@ -372,7 +468,7 @@
   <!-- JAVASCRIPT LOGIC CHÍNH & FIREBASE REALTIME MODULE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // 10 CẦU THỦ CỐ ĐỊNH BAN ĐẦU
@@ -393,7 +489,9 @@
     let captainPin = '2026';
     let currentMatchIndex = 0;  // 0: Trận 1, 1: Trận 2
     let activeSubTab = 'attend';
+    let paymentFilter = 'all';  // 'all' | 'unpaid' | 'pending' | 'paid'
     let playerToDeleteIndex = null;
+    let currentTeams = { teamOrange: [], teamBlue: [] };
 
     let bankConfig = {
       bankId: 'MB',
@@ -407,10 +505,12 @@
         shortName: "Thứ 3",
         pitchFee: 600000,
         waterFee: 80000,
+        gkDiscount: 50, // 50%, 100% or 0%
         players: INITIAL_PLAYERS.map(name => ({
           name: name,
           isAttending: true,
           guestCount: 0,
+          isGk: false,
           paymentStatus: 'unpaid',
           isGuest: false,
           addedByCaptain: true
@@ -421,10 +521,12 @@
         shortName: "Thứ 6",
         pitchFee: 600000,
         waterFee: 80000,
+        gkDiscount: 50,
         players: INITIAL_PLAYERS.map(name => ({
           name: name,
           isAttending: false,
           guestCount: 0,
+          isGk: false,
           paymentStatus: 'unpaid',
           isGuest: false,
           addedByCaptain: true
@@ -474,7 +576,7 @@
         try {
           await signInAnonymously(auth);
         } catch (authErr) {
-          console.warn("Ghi chú xác thực ẩn danh:", authErr);
+          console.warn("Xác thực ẩn danh:", authErr);
         }
 
         // Lắng nghe dữ liệu thời gian thực (Real-time listener)
@@ -493,7 +595,6 @@
             updateCloudUI('live', 'Cloud Trực tuyến');
             renderAll();
           } else {
-            // Khởi tạo tài liệu tuần đầu tiên lên Cloud
             isCloudReady = true;
             updateCloudUI('live', 'Cloud Trực tuyến');
             syncToCloud();
@@ -586,6 +687,11 @@
       }
     };
 
+    window.closePinModal = function() {
+      document.getElementById('pin-modal').classList.add('hidden');
+      document.getElementById('input-pin').value = '';
+    };
+
     window.verifyPin = function() {
       const pin = document.getElementById('input-pin').value.trim();
       if (pin === captainPin) {
@@ -645,6 +751,7 @@
 
       document.getElementById('input-pitch').value = matches[idx].pitchFee;
       document.getElementById('input-water').value = matches[idx].waterFee;
+      document.getElementById('select-gk-discount').value = (matches[idx].gkDiscount !== undefined) ? matches[idx].gkDiscount : 50;
 
       renderAll();
     };
@@ -667,23 +774,50 @@
       let totalSlots = 0;
       let attendingCount = 0;
       let paidCount = 0;
+      let pendingCount = 0;
+      let unpaidCount = 0;
+
+      let gkCount = 0;
+      let outfieldSlots = 0;
+
+      const gkDisc = (m.gkDiscount !== undefined) ? Number(m.gkDiscount) : 50;
 
       m.players.forEach(p => {
         if (p.isAttending) {
           attendingCount++;
           const slots = 1 + (p.guestCount || 0);
           totalSlots += slots;
+
           if (p.paymentStatus === 'paid') paidCount++;
+          else if (p.paymentStatus === 'pending') pendingCount++;
+          else unpaidCount++;
+
+          if (p.isGk) {
+            gkCount++;
+            outfieldSlots += (p.guestCount || 0); // khách đi cùng thủ môn tính suất người thường
+          } else {
+            outfieldSlots += slots;
+          }
         }
       });
 
       const totalCost = (Number(m.pitchFee) || 0) + (Number(m.waterFee) || 0);
       let feePerPerson = 0;
+      let gkFee = 0;
+
       if (totalSlots > 0) {
-        feePerPerson = Math.ceil((totalCost / totalSlots) / 5000) * 5000;
+        // Tỷ trọng suất nộp tiền thực tế có xét ưu đãi thủ môn
+        const effectivePayingSlots = outfieldSlots + (gkCount * (1 - (gkDisc / 100)));
+        if (effectivePayingSlots > 0) {
+          feePerPerson = Math.ceil((totalCost / effectivePayingSlots) / 5000) * 5000;
+          gkFee = Math.round((feePerPerson * (1 - (gkDisc / 100))) / 1000) * 1000;
+        } else {
+          feePerPerson = Math.ceil((totalCost / totalSlots) / 5000) * 5000;
+          gkFee = feePerPerson;
+        }
       }
 
-      return { totalSlots, attendingCount, paidCount, totalCost, feePerPerson };
+      return { totalSlots, attendingCount, paidCount, pendingCount, unpaidCount, totalCost, feePerPerson, gkFee, gkDisc };
     }
 
     window.updateFees = function() {
@@ -692,6 +826,13 @@
       m.waterFee = parseInt(document.getElementById('input-water').value) || 0;
       syncToCloud();
       renderAll();
+    };
+
+    window.updateGkDiscount = function(val) {
+      matches[currentMatchIndex].gkDiscount = parseInt(val) || 0;
+      syncToCloud();
+      renderAll();
+      showToast(`Đã đổi ưu đãi Thủ môn: Giảm ${val}%`);
     };
 
     function renderAll() {
@@ -708,18 +849,23 @@
       document.getElementById('count-paid').textContent = calc.paidCount;
       document.getElementById('count-total-pay').textContent = calc.attendingCount;
 
-      renderAttendanceList(calc.feePerPerson);
-      renderPaymentList(calc.feePerPerson);
+      // Cập nhật số đếm trên bộ lọc thanh toán
+      document.getElementById('filt-count-all').textContent = calc.attendingCount;
+      document.getElementById('filt-count-unpaid').textContent = calc.unpaidCount;
+      document.getElementById('filt-count-pending').textContent = calc.pendingCount;
+      document.getElementById('filt-count-paid').textContent = calc.paidCount;
+
+      renderAttendanceList(calc.feePerPerson, calc.gkFee);
+      renderPaymentList(calc.feePerPerson, calc.gkFee);
       updateQR();
     }
 
-    function renderAttendanceList(feePerPerson) {
+    function renderAttendanceList(feePerPerson, gkFee) {
       const listEl = document.getElementById('attendance-list');
       const m = matches[currentMatchIndex];
       listEl.innerHTML = '';
 
       m.players.forEach((p, index) => {
-        // Tag "Thêm": Nếu Đội trưởng thêm thì không hiện gì cả, nếu cầu thủ thêm thì hiện tag "Thêm"
         const showAddedTag = !INITIAL_PLAYERS.includes(p.name) && !p.addedByCaptain;
         
         const item = document.createElement('div');
@@ -730,7 +876,7 @@
         let deleteBtnHTML = '';
         if (currentRole === 'captain') {
           deleteBtnHTML = `
-            <button onclick="requestDeletePlayer(${index})" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 flex items-center justify-center transition shadow-sm ml-1" title="Xóa người này khỏi trận">
+            <button onclick="requestDeletePlayer(${index})" class="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 flex items-center justify-center transition shadow-sm ml-1" title="Xóa người này khỏi trận">
               <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
           `;
@@ -745,8 +891,17 @@
           }
         }
 
+        // Nút toggle Thủ Môn (🧤 GK)
+        const gkButtonHTML = p.isAttending ? `
+          <button onclick="toggleGk(${index})" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold transition flex items-center gap-0.5 ${
+            p.isGk ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-400 hover:text-slate-600 border border-slate-200'
+          }" title="Bấm để chọn/hủy vị trí Thủ Môn">
+            🧤 ${p.isGk ? 'Gôn' : 'GK?'}
+          </button>
+        ` : '';
+
         item.innerHTML = `
-          <div class="flex items-center space-x-2.5 min-w-0">
+          <div class="flex items-center space-x-2 min-w-0">
             <button onclick="toggleAttendance(${index})" class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition flex-shrink-0 ${
               p.isAttending ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'
             }">
@@ -756,6 +911,7 @@
               <div class="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5 ${p.isAttending ? '' : 'line-through text-slate-400'}">
                 <span>${p.name}</span>
                 ${tagBadgeHTML}
+                ${gkButtonHTML}
               </div>
               ${p.isAttending && p.guestCount > 0 ? `<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">+${p.guestCount} bạn</span>` : ''}
             </div>
@@ -780,22 +936,52 @@
       });
     }
 
-    function renderPaymentList(feePerPerson) {
+    window.setPaymentFilter = function(filter) {
+      paymentFilter = filter;
+      ['all', 'unpaid', 'pending', 'paid'].forEach(f => {
+        const btn = document.getElementById(`filter-${f}`);
+        if (f === filter) {
+          btn.className = "py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition shadow-sm";
+        } else {
+          btn.className = "py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition";
+        }
+      });
+      const calc = calculateMatch();
+      renderPaymentList(calc.feePerPerson, calc.gkFee);
+    };
+
+    function renderPaymentList(feePerPerson, gkFee) {
       const listEl = document.getElementById('payment-list');
       const m = matches[currentMatchIndex];
       listEl.innerHTML = '';
 
-      const attendingPlayers = m.players.filter(p => p.isAttending);
+      let attendingPlayers = m.players.filter(p => p.isAttending);
+
+      // Áp dụng bộ lọc
+      if (paymentFilter === 'unpaid') {
+        attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'unpaid');
+      } else if (paymentFilter === 'pending') {
+        attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'pending');
+      } else if (paymentFilter === 'paid') {
+        attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'paid');
+      }
 
       if (attendingPlayers.length === 0) {
-        listEl.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">Chưa có ai điểm danh đi đá.</div>`;
+        listEl.innerHTML = `<div class="text-center py-6 text-xs text-slate-400">Không có cầu thủ nào trong mục này.</div>`;
         return;
       }
 
       attendingPlayers.forEach(p => {
         const originalIndex = m.players.findIndex(x => x.name === p.name);
-        const slots = 1 + (p.guestCount || 0);
-        const amount = feePerPerson * slots;
+        const guestSlots = p.guestCount || 0;
+        
+        // Tính tiền nếu là thủ môn
+        let amount = 0;
+        if (p.isGk) {
+          amount = gkFee + (guestSlots * feePerPerson);
+        } else {
+          amount = (1 + guestSlots) * feePerPerson;
+        }
 
         const row = document.createElement('div');
         row.className = "p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between shadow-sm";
@@ -840,11 +1026,14 @@
           }
         }
 
+        const totalSlots = 1 + guestSlots;
+
         row.innerHTML = `
           <div class="min-w-0 pr-2">
             <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5 truncate">
-              ${p.name}
-              ${slots > 1 ? `<span class="text-[10px] text-emerald-600">(${slots} suất)</span>` : ''}
+              <span>${p.name}</span>
+              ${p.isGk ? `<span class="text-[9px] bg-amber-100 text-amber-800 px-1 rounded font-semibold">🧤 GK</span>` : ''}
+              ${totalSlots > 1 ? `<span class="text-[10px] text-emerald-600 font-semibold">(${totalSlots} suất)</span>` : ''}
             </div>
             <div class="text-[11px] font-semibold text-emerald-700 mt-0.5">
               ${amount.toLocaleString('vi-VN')}đ
@@ -864,10 +1053,19 @@
       p.isAttending = !p.isAttending;
       if (!p.isAttending) {
         p.guestCount = 0;
+        p.isGk = false;
         p.paymentStatus = 'unpaid';
       }
       syncToCloud();
       renderAll();
+    };
+
+    window.toggleGk = function(index) {
+      const p = matches[currentMatchIndex].players[index];
+      p.isGk = !p.isGk;
+      syncToCloud();
+      renderAll();
+      showToast(p.isGk ? `🧤 ${p.name} là Thủ môn` : `Đã bỏ vị trí GK của ${p.name}`);
     };
 
     window.changeGuest = function(index, delta) {
@@ -888,6 +1086,7 @@
         name: name,
         isAttending: true,
         guestCount: 0,
+        isGk: false,
         paymentStatus: 'unpaid',
         isGuest: !isCaptain,
         addedByCaptain: isCaptain
@@ -948,6 +1147,7 @@
             name: defaultName,
             isAttending: false,
             guestCount: 0,
+            isGk: false,
             paymentStatus: 'unpaid',
             isGuest: false,
             addedByCaptain: true
@@ -967,6 +1167,103 @@
       matches[currentMatchIndex].players[index].paymentStatus = status;
       syncToCloud();
       renderAll();
+    };
+
+    window.openShuffleTeamsModal = function() {
+      shuffleAndGenerateTeams();
+      document.getElementById('teams-modal').classList.remove('hidden');
+    };
+
+    window.closeShuffleTeamsModal = function() {
+      document.getElementById('teams-modal').classList.add('hidden');
+    };
+
+    window.shuffleAndGenerateTeams = function() {
+      const m = matches[currentMatchIndex];
+      const attending = m.players.filter(p => p.isAttending);
+
+      if (attending.length < 2) {
+        showToast("Cần ít nhất 2 người điểm danh để chia đội!");
+        return;
+      }
+
+      // Xây dựng danh sách cầu thủ gồm cả bạn ngoài
+      let poolGk = [];
+      let poolField = [];
+
+      attending.forEach(p => {
+        if (p.isGk) {
+          poolGk.push({ name: `${p.name} (🧤 GK)`, isGk: true });
+        } else {
+          poolField.push({ name: p.name, isGk: false });
+        }
+
+        // Thêm bạn đi kèm
+        for (let i = 1; i <= (p.guestCount || 0); i++) {
+          poolField.push({ name: `Bạn của ${p.name} #${i}`, isGk: false });
+        }
+      });
+
+      // Xáo trộn ngẫu nhiên (Fisher-Yates)
+      const shuffle = (arr) => {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+
+      poolGk = shuffle(poolGk);
+      poolField = shuffle(poolField);
+
+      const teamOrange = [];
+      const teamBlue = [];
+
+      // Chia đều thủ môn trước
+      poolGk.forEach((gk, idx) => {
+        if (idx % 2 === 0) teamOrange.push(gk.name);
+        else teamBlue.push(gk.name);
+      });
+
+      // Chia đều cầu thủ sân
+      poolField.forEach((player, idx) => {
+        if (teamOrange.length <= teamBlue.length) {
+          teamOrange.push(player.name);
+        } else {
+          teamBlue.push(player.name);
+        }
+      });
+
+      currentTeams = { teamOrange, teamBlue };
+
+      // Render lên modal
+      document.getElementById('count-team-orange').textContent = teamOrange.length;
+      document.getElementById('count-team-blue').textContent = teamBlue.length;
+      document.getElementById('teams-summary-text').textContent = `Tổng cộng: ${teamOrange.length + teamBlue.length} cầu thủ sẵn sàng thi đấu`;
+
+      const listOrangeEl = document.getElementById('list-team-orange');
+      const listBlueEl = document.getElementById('list-team-blue');
+
+      listOrangeEl.innerHTML = teamOrange.map((name, i) => `<li class="p-1 rounded bg-white border border-orange-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-orange-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
+      listBlueEl.innerHTML = teamBlue.map((name, i) => `<li class="p-1 rounded bg-white border border-blue-100 flex items-center gap-1.5"><span class="w-4 text-center font-bold text-blue-600">${i+1}.</span><span class="truncate">${name}</span></li>`).join('');
+    };
+
+    window.copyTeamsToZalo = function() {
+      const m = matches[currentMatchIndex];
+      let text = `⚽ ĐỘI HÌNH ĐÁ TẬP - ${m.title.toUpperCase()}\n`;
+      text += `---------------------------------\n`;
+      text += `🟠 ĐỘI CAM (${currentTeams.teamOrange.length} cầu thủ):\n`;
+      currentTeams.teamOrange.forEach((name, i) => {
+        text += `${i + 1}. ${name}\n`;
+      });
+      text += `\n🔵 ĐỘI XANH (${currentTeams.teamBlue.length} cầu thủ):\n`;
+      currentTeams.teamBlue.forEach((name, i) => {
+        text += `${i + 1}. ${name}\n`;
+      });
+      text += `\n🔥 Chúc anh em thi đấu vui vẻ, fair-play!`;
+
+      copyTextToClipboard(text);
+      showToast("Đã copy đội hình chia 2 phe gửi Zalo!");
     };
 
     function updateQR() {
@@ -1048,6 +1345,7 @@
         name: name,
         isAttending: false,
         guestCount: 0,
+        isGk: false,
         paymentStatus: 'unpaid',
         isGuest: false,
         addedByCaptain: true
@@ -1070,9 +1368,11 @@
       text += `🏟️ Tiền sân: ${(m.pitchFee || 0).toLocaleString('vi-VN')}đ\n`;
       text += `🥤 Tiền nước: ${(m.waterFee || 0).toLocaleString('vi-VN')}đ\n`;
       text += `👥 Tổng: ${calc.totalSlots} suất đá\n`;
-      text += `👉 MỖI NGƯỜI: ${calc.feePerPerson.toLocaleString('vi-VN')}đ/suất\n\n`;
-
-      text += `💳 THÔNG TIN CHUYỂN KHOẢN (ĐỘI TRƯỞNG HƯNG):\n`;
+      text += `👉 CẦU THỦ SÂN: ${calc.feePerPerson.toLocaleString('vi-VN')}đ/suất\n`;
+      if (calc.gkDisc > 0) {
+        text += `🧤 THỦ MÔN (Giảm ${calc.gkDisc}%): ${calc.gkFee.toLocaleString('vi-VN')}đ/suất\n`;
+      }
+      text += `\n💳 THÔNG TIN CHUYỂN KHOẢN (ĐỘI TRƯỞNG HƯNG):\n`;
       text += `• Ngân hàng: ${bankConfig.bankId}\n`;
       text += `• STK: ${bankConfig.accountNo}\n`;
       text += `• Tên: ${bankConfig.accountName}\n`;
@@ -1082,13 +1382,19 @@
         text += `⏳ ANH EM CHƯA TING-TING (${unpaids.length} bạn):\n`;
         unpaids.forEach(p => {
           const st = p.paymentStatus === 'pending' ? '(Đã chuyển - chờ Hưng check)' : '(Chưa đóng)';
-          text += `- ${p.name} ${st}\n`;
+          const gkTag = p.isGk ? ' [🧤 GK]' : '';
+          text += `- ${p.name}${gkTag} ${st}\n`;
         });
       } else {
         text += `🎉 Tuyệt vời! Tất cả anh em đã hoàn tất tiền sân!`;
       }
 
       copyTextToClipboard(text);
+    };
+
+    window.copyBankAcc = function() {
+      copyTextToClipboard(bankConfig.accountNo);
+      showToast(`Đã copy số tài khoản: ${bankConfig.accountNo}`);
     };
 
     function copyTextToClipboard(text) {
@@ -1101,7 +1407,7 @@
       textArea.select();
       try {
         document.execCommand('copy');
-        showToast("Đã copy tin nhắn Zalo!");
+        showToast("Đã sao chép vào bộ nhớ tạm!");
       } catch (err) {
         showToast("Không thể sao chép tự động");
       }
