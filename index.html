@@ -86,9 +86,14 @@
       <div class="flex justify-between items-start pb-2 border-b border-slate-100">
         <div>
           <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Lịch thi đấu</span>
-          <h2 class="text-base font-bold text-emerald-800 flex items-center gap-1.5" id="match-title">
-            Trận 1: Thứ 3
-          </h2>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-bold text-emerald-800 flex items-center gap-1.5" id="match-title">
+              Trận 1: Thứ 3
+            </h2>
+            <span id="match-lock-badge" class="hidden text-[10px] bg-red-100 text-red-700 border border-red-200 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <i class="fa-solid fa-lock text-[9px]"></i>Đã chốt sổ
+            </span>
+          </div>
           <div id="match-details-sub" class="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5">
             <span id="disp-match-time"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>19:00 - 20:30</span>
             <span>•</span>
@@ -150,6 +155,12 @@
           </select>
         </div>
 
+        <!-- Nút Chốt sổ danh sách (Khóa / Mở điểm danh độc lập từng trận) -->
+        <button id="btn-toggle-lock" onclick="toggleMatchLock()" class="w-full text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm bg-amber-500 hover:bg-amber-600 text-white">
+          <i class="fa-solid fa-lock" id="icon-toggle-lock"></i>
+          <span id="text-toggle-lock">Chốt sổ danh sách (Khóa điểm danh)</span>
+        </button>
+
         <!-- Các nút hành động chính (Đã gỡ nút khôi phục 10 người) -->
         <div class="flex gap-2 pt-1">
           <button onclick="copyZaloMsg()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
@@ -187,11 +198,19 @@
 
     <!-- VIEW 1: ĐIỂM DANH & QUẢN LÝ QUÂN SỐ -->
     <div id="subtab-attend" class="space-y-2">
+      <!-- Dải cảnh báo khi Đội trưởng đã chốt sổ danh sách -->
+      <div id="locked-attendance-banner" class="hidden bg-red-50 border border-red-200 text-red-800 p-2.5 rounded-xl text-xs flex items-center gap-2 shadow-sm">
+        <i class="fa-solid fa-lock text-red-600 text-sm flex-shrink-0"></i>
+        <div>
+          <b>Danh sách đã chốt:</b> Đội trưởng Hưng đã chốt sổ để tính tiền sân. Mọi thay đổi đi/nghỉ vui lòng báo riêng cho Hưng nhé!
+        </div>
+      </div>
+
       <!-- Ô thêm thành viên & Nút chia 2 đội -->
       <div class="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-sm">
         <div class="flex gap-2">
-          <input type="text" id="guest-name" placeholder="Rủ thêm bạn ngoài hoặc thêm cầu thủ..." class="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" onkeydown="if(event.key==='Enter') addGuest()" />
-          <button onclick="addGuest()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap flex items-center gap-1 shadow-sm">
+          <input type="text" id="guest-name" placeholder="Rủ thêm bạn ngoài hoặc thêm cầu thủ..." class="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" onkeydown="if(event.key==='Enter') addGuest()" />
+          <button id="btn-add-guest" onclick="addGuest()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap flex items-center gap-1 shadow-sm">
             <i class="fa-solid fa-user-plus text-xs"></i> Thêm bạn
           </button>
         </div>
@@ -602,6 +621,7 @@
         pitchFee: 600000,
         waterFee: 80000,
         gkDiscount: 50,
+        isLocked: false,
         players: INITIAL_PLAYERS.map(name => ({
           name: name,
           isAttending: true,
@@ -620,6 +640,7 @@
         pitchFee: 600000,
         waterFee: 80000,
         gkDiscount: 50,
+        isLocked: false,
         players: INITIAL_PLAYERS.map(name => ({
           name: name,
           isAttending: false,
@@ -1032,6 +1053,55 @@
       if (l1 && matches[0]) l1.textContent = `Trận 1: ${matches[0].shortName || 'Thứ 3'}`;
       if (l2 && matches[1]) l2.textContent = `Trận 2: ${matches[1].shortName || 'Thứ 6'}`;
 
+      // Hiển thị huy hiệu Đã chốt sổ trên Thẻ trận đấu
+      const lockBadge = document.getElementById('match-lock-badge');
+      if (lockBadge) {
+        if (m.isLocked) lockBadge.classList.remove('hidden');
+        else lockBadge.classList.add('hidden');
+      }
+
+      // Cập nhật banner cảnh báo cho cầu thủ
+      const lockBanner = document.getElementById('locked-attendance-banner');
+      if (lockBanner) {
+        if (m.isLocked && currentRole !== 'captain') lockBanner.classList.remove('hidden');
+        else lockBanner.classList.add('hidden');
+      }
+
+      // Cập nhật trạng thái nút Chốt sổ của Đội trưởng
+      const btnToggleLock = document.getElementById('btn-toggle-lock');
+      const iconToggleLock = document.getElementById('icon-toggle-lock');
+      const textToggleLock = document.getElementById('text-toggle-lock');
+      if (btnToggleLock && iconToggleLock && textToggleLock) {
+        if (m.isLocked) {
+          btnToggleLock.className = "w-full text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white";
+          iconToggleLock.className = "fa-solid fa-lock-open";
+          textToggleLock.textContent = "Mở lại điểm danh (Đang chốt sổ)";
+        } else {
+          btnToggleLock.className = "w-full text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm bg-amber-500 hover:bg-amber-600 text-white";
+          iconToggleLock.className = "fa-solid fa-lock";
+          textToggleLock.textContent = "Chốt sổ danh sách (Khóa điểm danh)";
+        }
+      }
+
+      // Khóa hoặc mở ô thêm bạn nếu danh sách đã chốt
+      const guestInput = document.getElementById('guest-name');
+      const guestBtn = document.getElementById('btn-add-guest');
+      if (guestInput && guestBtn) {
+        if (m.isLocked && currentRole !== 'captain') {
+          guestInput.disabled = true;
+          guestInput.placeholder = "🔒 Đội trưởng đã chốt sổ danh sách...";
+          guestInput.classList.add('bg-slate-100', 'cursor-not-allowed');
+          guestBtn.disabled = true;
+          guestBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          guestInput.disabled = false;
+          guestInput.placeholder = "Rủ thêm bạn ngoài hoặc thêm cầu thủ...";
+          guestInput.classList.remove('bg-slate-100', 'cursor-not-allowed');
+          guestBtn.disabled = false;
+          guestBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+
       // Đồng bộ thông tin trận trên Thẻ Lịch Thi Đấu
       const matchTitle = document.getElementById('match-title');
       const dispTime = document.getElementById('disp-match-time');
@@ -1122,10 +1192,11 @@
           }
         }
 
+        const isActionDisabled = m.isLocked && currentRole !== 'captain';
         const gkButtonHTML = p.isAttending ? `
           <button onclick="toggleGk(${index})" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold transition flex items-center gap-0.5 ${
             p.isGk ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-400 hover:text-slate-600 border border-slate-200'
-          }" title="Bấm để chọn/hủy vị trí Thủ Môn">
+          } ${isActionDisabled ? 'opacity-70 cursor-not-allowed' : ''}" title="${isActionDisabled ? 'Danh sách đã chốt' : 'Bấm để chọn/hủy vị trí Thủ Môn'}">
             🧤 ${p.isGk ? 'Gôn' : 'GK?'}
           </button>
         ` : '';
@@ -1134,8 +1205,8 @@
           <div class="flex items-center space-x-2 min-w-0">
             <button onclick="toggleAttendance(${index})" class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition flex-shrink-0 ${
               p.isAttending ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'
-            }">
-              <i class="fa-solid ${p.isAttending ? 'fa-check' : 'fa-xmark'}"></i>
+            } ${isActionDisabled ? 'opacity-80' : ''}" title="${isActionDisabled ? 'Danh sách đã chốt sổ' : 'Đổi trạng thái đi/nghỉ'}">
+              <i class="fa-solid ${p.isAttending ? (isActionDisabled ? 'fa-check' : 'fa-check') : (isActionDisabled ? 'fa-lock text-xs' : 'fa-xmark')}"></i>
             </button>
             <div class="truncate">
               <div class="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5 ${p.isAttending ? '' : 'line-through text-slate-400'}">
@@ -1150,14 +1221,14 @@
 
           <div class="flex items-center space-x-1.5 flex-shrink-0">
             ${p.isAttending ? `
-              <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs">
-                <button onclick="changeGuest(${index}, -1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold">-</button>
+              <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs ${isActionDisabled ? 'opacity-60' : ''}">
+                <button onclick="changeGuest(${index}, -1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">-</button>
                 <span class="px-1 text-[11px] font-bold text-slate-700">${p.guestCount > 0 ? '+' + p.guestCount : '0'}</span>
-                <button onclick="changeGuest(${index}, 1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold">+</button>
+                <button onclick="changeGuest(${index}, 1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">+</button>
               </div>
             ` : `
-              <button onclick="toggleAttendance(${index})" class="text-[11px] bg-slate-200 hover:bg-emerald-600 hover:text-white px-2.5 py-1 rounded-lg text-slate-600 transition font-medium">
-                Báo đi
+              <button onclick="toggleAttendance(${index})" class="text-[11px] ${isActionDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-200 hover:bg-emerald-600 hover:text-white text-slate-600'} px-2.5 py-1 rounded-lg transition font-medium">
+                ${isActionDisabled ? '🔒 Đã chốt' : 'Báo đi'}
               </button>
             `}
             ${deleteBtnHTML}
@@ -1321,32 +1392,22 @@
               </button>
             `;
           }
-        } else if (p.paymentStatus === 'paid') {
-          statusBadge = `<span class="badge-paid text-[10px] font-bold px-2 py-0.5 rounded-full">🟢 Duyệt ting-ting</span>`;
-          
+        } else {
+          statusBadge = `<span class="badge-paid text-[10px] font-bold px-2 py-0.5 rounded-full">🟢 Đã duyệt</span>`;
           if (currentRole === 'captain') {
             actionBtn = `
-              <button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[10px] text-slate-400 hover:text-red-500 px-2 py-1 rounded bg-slate-100">
-                Bỏ duyệt
+              <button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[11px] text-slate-400 hover:text-red-500 underline ml-1">
+                Hủy duyệt
               </button>
             `;
-          } else {
-            actionBtn = `<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>`;
           }
         }
 
-        const totalSlots = 1 + guestSlots;
-
         row.innerHTML = `
-          <div class="min-w-0 pr-2">
-            <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5 truncate">
-              <span>${p.name}</span>
-              ${p.isGk ? `<span class="text-[9px] bg-amber-100 text-amber-800 px-1 rounded font-semibold">🧤 GK</span>` : ''}
-              ${totalSlots > 1 ? `<span class="text-[10px] text-emerald-600 font-semibold">(${totalSlots} suất)</span>` : ''}
-            </div>
-            <div class="text-[11px] font-semibold text-emerald-700 mt-0.5">
-              ${amount.toLocaleString('vi-VN')}đ
-            </div>
+          <div>
+            <span class="font-bold text-slate-800 text-xs">${p.name} ${p.isGk ? '(🧤 GK)' : ''}</span>
+            ${guestSlots > 0 ? `<span class="text-[10px] text-slate-500"> (+${guestSlots} bạn)</span>` : ''}
+            <div class="text-[11px] text-emerald-700 font-extrabold mt-0.5">${amount.toLocaleString('vi-VN')}đ</div>
           </div>
           <div class="flex items-center space-x-2">
             ${statusBadge}
@@ -1357,8 +1418,29 @@
       });
     }
 
+    // ĐỘI TRƯỞNG BẬT/TẮT CHỐT SỔ DANH SÁCH CHO TRẬN HIỆN TẠI
+    window.toggleMatchLock = function() {
+      if (currentRole !== 'captain') return;
+      const m = matches[currentMatchIndex];
+      if (!m) return;
+      m.isLocked = !m.isLocked;
+      syncToCloud();
+      renderAll();
+      if (m.isLocked) {
+        showToast(`🔒 Đã chốt sổ ${m.shortName || 'trận đấu'}! Cầu thủ không thể tự ý đổi điểm danh.`);
+      } else {
+        showToast(`🔓 Đã mở lại điểm danh cho ${m.shortName || 'trận đấu'}!`);
+      }
+    };
+
     window.toggleAttendance = function(index) {
-      const p = matches[currentMatchIndex].players[index];
+      const m = matches[currentMatchIndex];
+      if (!m) return;
+      if (m.isLocked && currentRole !== 'captain') {
+        showToast("🔒 Danh sách đã chốt sổ! Vui lòng liên hệ Đội trưởng Hưng.");
+        return;
+      }
+      const p = m.players[index];
       if (!p) return;
       p.isAttending = !p.isAttending;
       if (!p.isAttending) {
@@ -1371,7 +1453,13 @@
     };
 
     window.toggleGk = function(index) {
-      const p = matches[currentMatchIndex].players[index];
+      const m = matches[currentMatchIndex];
+      if (!m) return;
+      if (m.isLocked && currentRole !== 'captain') {
+        showToast("🔒 Danh sách đã chốt sổ! Vui lòng liên hệ Đội trưởng Hưng.");
+        return;
+      }
+      const p = m.players[index];
       if (!p) return;
       p.isGk = !p.isGk;
       syncToCloud();
@@ -1380,7 +1468,13 @@
     };
 
     window.changeGuest = function(index, delta) {
-      const p = matches[currentMatchIndex].players[index];
+      const m = matches[currentMatchIndex];
+      if (!m) return;
+      if (m.isLocked && currentRole !== 'captain') {
+        showToast("🔒 Danh sách đã chốt sổ! Vui lòng liên hệ Đội trưởng Hưng.");
+        return;
+      }
+      const p = m.players[index];
       if (!p) return;
       p.guestCount = Math.max(0, (p.guestCount || 0) + delta);
       syncToCloud();
@@ -1388,13 +1482,19 @@
     };
 
     window.addGuest = function() {
+      const m = matches[currentMatchIndex];
+      if (!m) return;
+      if (m.isLocked && currentRole !== 'captain') {
+        showToast("🔒 Danh sách đã chốt sổ! Không thể thêm người.");
+        return;
+      }
       const input = document.getElementById('guest-name');
       const name = input ? input.value.trim() : '';
       if (!name) return;
 
       const isCaptain = (currentRole === 'captain');
 
-      matches[currentMatchIndex].players.push({
+      m.players.push({
         name: name,
         isAttending: true,
         guestCount: 0,
@@ -1681,10 +1781,10 @@
       const modal = document.getElementById('reset-modal');
       if (modal) modal.classList.add('hidden');
     };
-
-    // RESET TRẬN: GIỮ NGUYÊN DANH SÁCH HIỆN CÓ, KHÔNG KHÔI PHỤC NGƯỜI ĐÃ XÓA
+    // RESET TRẬN: GIỮ NGUYÊN DANH SÁCH HIỆN CÓ VÀ TỰ ĐỘNG MỞ KHÓA CHO TUẦN MỚI
     window.confirmResetMatch = function() {
       if (matches[currentMatchIndex]) {
+        matches[currentMatchIndex].isLocked = false; // Tự động mở khóa cho tuần đá mới!
         matches[currentMatchIndex].players = matches[currentMatchIndex].players.map(p => ({
           ...p,
           isAttending: false,
@@ -1696,7 +1796,7 @@
         syncToCloud();
         renderAll();
         window.closeResetModal();
-        showToast("Đã reset trạng thái điểm danh & tiền sân!");
+        showToast("Đã reset trận & tự động mở lại điểm danh cho tuần mới!");
       }
     };
 
