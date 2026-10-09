@@ -7,22 +7,28 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent; 
+    }
     .badge-unpaid { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
     .badge-pending { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
     .badge-paid { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-16">
 
   <!-- Header -->
   <header class="bg-emerald-700 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-futbol text-2xl text-yellow-300"></i>
+        <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-lg shadow-inner">
+          ⚽
+        </div>
         <div>
-          <h1 class="font-bold text-base leading-tight">Sân Cỏ Hub</h1>
-          <p class="text-xs text-emerald-200" id="role-indicator">Vai trò: Cầu thủ (Xem)</p>
+          <h1 class="font-extrabold text-base leading-tight">Sân Cỏ Hub</h1>
+          <p class="text-[11px] text-emerald-200" id="role-indicator">Vai trò: Cầu thủ (Xem & Báo)</p>
         </div>
       </div>
       <button onclick="toggleRoleModal()" class="text-xs bg-emerald-800 hover:bg-emerald-900 border border-emerald-500 px-2.5 py-1.5 rounded-lg flex items-center space-x-1.5 transition">
@@ -46,20 +52,19 @@
     </div>
   </header>
 
-  <!-- Container chính -->
   <main class="max-w-md mx-auto px-4 pt-3 space-y-3">
 
     <!-- Thông tin tóm tắt trận đấu -->
     <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
         <div>
-          <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Lịch thi đấu</span>
-          <h2 class="text-base font-bold text-emerald-800 flex items-center gap-1.5" id="match-title">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lịch thi đấu</span>
+          <h2 class="text-base font-extrabold text-emerald-800 flex items-center gap-1.5" id="match-title">
             Trận Thứ 3
           </h2>
         </div>
         <div class="text-right">
-          <span class="text-xs text-slate-500">Tổng quân số</span>
+          <span class="text-[11px] text-slate-400">Tổng quân số</span>
           <div class="text-lg font-black text-emerald-600" id="total-slots">0 suất</div>
         </div>
       </div>
@@ -67,41 +72,41 @@
       <!-- Thống kê nhanh tiền nong -->
       <div class="grid grid-cols-3 gap-2 pt-2.5 text-center">
         <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-          <span class="text-[11px] text-slate-500 block">Tiền sân</span>
+          <span class="text-[10px] text-slate-400 block font-medium">Tiền sân</span>
           <span class="text-xs font-bold text-slate-700" id="disp-pitch-fee">0đ</span>
         </div>
         <div class="bg-slate-50 rounded-xl p-2 border border-slate-100">
-          <span class="text-[11px] text-slate-500 block">Nước/bóng</span>
+          <span class="text-[10px] text-slate-400 block font-medium">Nước/bóng</span>
           <span class="text-xs font-bold text-slate-700" id="disp-water-fee">0đ</span>
         </div>
         <div class="bg-emerald-50 rounded-xl p-2 border border-emerald-100">
-          <span class="text-[11px] text-emerald-600 font-medium block">Mỗi người</span>
+          <span class="text-[10px] text-emerald-600 block font-bold">Mỗi người</span>
           <span class="text-xs font-extrabold text-emerald-700" id="disp-fee-per-person">0đ</span>
         </div>
       </div>
 
-      <!-- Khu vực điều khiển của Đội trưởng Hưng (Mặc định ẩn với Cầu thủ) -->
+      <!-- Khu vực điều khiển của Đội trưởng Vương Hưng -->
       <div id="captain-controls" class="hidden mt-3 pt-3 border-t border-dashed border-slate-200 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-amber-700 flex items-center gap-1">
             <i class="fa-solid fa-crown text-amber-500"></i> Bảng điều khiển Đội trưởng
           </span>
-          <button onclick="editMatchDay()" class="text-[11px] text-blue-600 hover:underline">
-            <i class="fa-solid fa-pen"></i> Đổi tên/thứ
+          <button onclick="editMatchDay()" class="text-[11px] text-emerald-700 font-semibold hover:underline">
+            <i class="fa-solid fa-pen"></i> Đổi thứ/ngày
           </button>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền sân (VNĐ):</label>
-            <input type="number" id="input-pitch" step="10000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: 600000" onchange="updateFees()" />
+            <input type="number" id="input-pitch" step="10000" class="w-full text-xs p-2 rounded-lg border border-slate-300 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: 600000" onchange="updateFees()" />
           </div>
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền nước/bóng:</label>
-            <input type="number" id="input-water" step="5000" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: 100000" onchange="updateFees()" />
+            <input type="number" id="input-water" step="5000" class="w-full text-xs p-2 rounded-lg border border-slate-300 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: 100000" onchange="updateFees()" />
           </div>
         </div>
         <div class="flex gap-2 pt-1">
-          <button onclick="copyZaloMsg()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+          <button onclick="copyZaloMsg()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-share-nodes"></i> Copy gửi nhóm Zalo
           </button>
           <button onclick="resetMatchData()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium px-3 py-2 rounded-xl transition">
@@ -111,7 +116,7 @@
       </div>
     </div>
 
-    <!-- Tab chuyển: Điểm danh / Nộp tiền / Lịch sử -->
+    <!-- Tab chuyển: Điểm danh / Nộp tiền / Mã QR -->
     <div class="flex bg-slate-200/80 p-1 rounded-xl text-xs font-semibold">
       <button id="subtab-btn-attend" onclick="switchSubTab('attend')" class="flex-1 py-1.5 rounded-lg transition text-slate-700">
         <i class="fa-solid fa-user-check mr-1"></i> Điểm danh (<span id="count-attending">0</span>)
@@ -126,11 +131,11 @@
 
     <!-- VIEW 1: ĐIỂM DANH -->
     <div id="subtab-attend" class="space-y-2">
-      <!-- Thêm người ngoài / vãng lai -->
+      <!-- Thêm người mới vào trận (Hiển thị tên chuẩn xác) -->
       <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex gap-2">
-        <input type="text" id="guest-name" placeholder="Rủ thêm bạn ngoài nhóm? Nhập tên..." class="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-        <button onclick="addGuest()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition whitespace-nowrap">
-          <i class="fa-solid fa-plus"></i> Thêm bạn
+        <input type="text" id="guest-name" placeholder="Thêm bạn tham gia (Nhập tên)..." class="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        <button onclick="addGuest()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">
+          <i class="fa-solid fa-plus text-emerald-400"></i> Thêm bạn
         </button>
       </div>
 
@@ -142,10 +147,10 @@
 
     <!-- VIEW 2: TRẠNG THÁI NỘP TIỀN -->
     <div id="subtab-pay" class="hidden space-y-2">
-      <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-xs text-amber-800 flex items-start gap-2">
+      <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-xs text-amber-800 flex items-start gap-2 shadow-xs">
         <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
         <div>
-          Anh em chuyển khoản xong thì bấm <b>"Tôi đã chuyển"</b>. Đội trưởng Hưng kiểm tra ting-ting sẽ bấm xác nhận nhé!
+          Anh em chuyển khoản xong bấm <b>"Tôi đã chuyển"</b>. Đội trưởng Hưng kiểm tra ting-ting sẽ bấm xác nhận nhé!
         </div>
       </div>
       <div class="space-y-1.5" id="payment-list">
@@ -157,7 +162,7 @@
     <div id="subtab-qr" class="hidden">
       <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-3">
         <h3 class="font-bold text-slate-800 text-sm">Quét mã VietQR chuyển tiền sân</h3>
-        <p class="text-xs text-slate-500">Mã QR tự động cập nhật số tiền chính xác theo trận đấu</p>
+        <p class="text-[11px] text-slate-400">Mã QR tự động cập nhật số tiền chính xác theo trận đấu</p>
         
         <div class="flex justify-center py-1">
           <img id="qr-image" src="" alt="VietQR" class="w-56 h-auto rounded-xl shadow border border-slate-100" />
@@ -166,12 +171,12 @@
         <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-left space-y-1 text-slate-600">
           <div><b>Ngân hàng:</b> <span id="bank-name">MB Bank (Quân Đội)</span></div>
           <div><b>Số tài khoản:</b> <span id="bank-acc" class="font-mono font-bold text-slate-900">0938123456</span></div>
-          <div><b>Chủ tài khoản:</b> <span id="bank-owner" class="font-bold">VƯƠNG HƯNG</span></div>
+          <div><b>Chủ tài khoản:</b> <span id="bank-owner" class="font-bold uppercase">VUONG HUNG</span></div>
           <div><b>Nội dung CK:</b> <span id="bank-memo" class="text-emerald-700 font-semibold">[Tên bạn] da banh</span></div>
         </div>
 
         <div id="captain-bank-edit" class="hidden pt-2 border-t border-slate-100">
-          <button onclick="editBankInfo()" class="text-xs text-blue-600 hover:underline">
+          <button onclick="editBankInfo()" class="text-xs text-emerald-700 font-semibold hover:underline">
             <i class="fa-solid fa-gear"></i> Cấu hình tài khoản ngân hàng của Hưng
           </button>
         </div>
@@ -187,17 +192,17 @@
         <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-lg font-bold">
           <i class="fa-solid fa-lock"></i>
         </div>
-        <h3 class="font-bold text-slate-800">Xác nhận Đội trưởng</h3>
-        <p class="text-xs text-slate-500">Nhập mã PIN để mở quyền điều hành tiền sân & duyệt thanh toán (Mặc định: 1234)</p>
+        <h3 class="font-bold text-slate-800 text-sm">Xác nhận quyền Đội trưởng</h3>
+        <p class="text-xs text-slate-500">Vui lòng nhập mã PIN bảo mật để mở quyền điều hành tiền sân & duyệt thanh toán</p>
       </div>
 
-      <input type="password" id="input-pin" maxlength="6" placeholder="Mã PIN" class="w-full text-center tracking-widest text-lg font-bold py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+      <input type="password" id="input-pin" maxlength="6" placeholder="Nhập mã PIN" class="w-full text-center tracking-widest text-lg font-bold py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500" />
 
       <div class="flex gap-2">
         <button onclick="toggleRoleModal()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
           Hủy
         </button>
-        <button onclick="verifyPin()" class="flex-1 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition">
+        <button onclick="verifyPin()" class="flex-1 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition">
           Xác nhận
         </button>
       </div>
@@ -205,12 +210,12 @@
   </div>
 
   <!-- Thông báo Toast -->
-  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-lg transition opacity-0 pointer-events-none z-50">
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2 rounded-full shadow-lg transition opacity-0 pointer-events-none z-50">
     Đã sao chép!
   </div>
 
   <script>
-    // DANH SÁCH 10 CẦU THỦ CỐ ĐỊNH TỪ ZALO
+    // 10 CẦU THỦ CỐ ĐỊNH TRONG NHÓM ZALO
     const INITIAL_PLAYERS = [
       "Vương Hưng",
       "Văn",
@@ -224,20 +229,19 @@
       "Chí Trung"
     ];
 
-    // CẤU HÌNH BAN ĐẦU
-    let currentRole = 'player'; // Mặc định là 'player' (Cầu thủ). Chỉ khi nhập PIN mới thành 'captain'
-    let captainPin = '1234';
+    let currentRole = 'player'; // Mặc định luôn là Cầu thủ
+    let captainPin = '2026';   // MÃ PIN ĐỘI TRƯỞNG MỚI ĐÃ ĐƯỢC ĐỔI THÀNH 2026
     let currentMatchIndex = 0; // 0: Trận 1, 1: Trận 2
     let activeSubTab = 'attend';
 
-    // Cấu hình ngân hàng VietQR của Hưng (Có thể đổi trực tiếp)
+    // Cấu hình ngân hàng mặc định
     let bankConfig = {
-      bankId: 'MB', // MB Bank, VCB, TCB, ACB, VPB, ICB...
+      bankId: 'MB',
       accountNo: '0938123456',
       accountName: 'VUONG HUNG'
     };
 
-    // DỮ LIỆU 2 TRẬN TRONG TUẦN
+    // Dữ liệu 2 trận trong tuần
     let matches = [
       {
         title: "Trận 1: Thứ Ba (19:00)",
@@ -248,7 +252,7 @@
           name: name,
           isAttending: true,
           guestCount: 0,
-          paymentStatus: 'unpaid' // 'unpaid' | 'pending' | 'paid'
+          paymentStatus: 'unpaid'
         }))
       },
       {
@@ -265,7 +269,6 @@
       }
     ];
 
-    // KHỞI ĐỘNG
     window.onload = function() {
       loadFromStorage();
       updateRoleUI();
@@ -274,22 +277,21 @@
     };
 
     function saveToStorage() {
-      localStorage.setItem('sanco_matches_v2', JSON.stringify(matches));
-      localStorage.setItem('sanco_bank_v2', JSON.stringify(bankConfig));
+      localStorage.setItem('sanco_matches_v2026', JSON.stringify(matches));
+      localStorage.setItem('sanco_bank_v2026', JSON.stringify(bankConfig));
     }
 
     function loadFromStorage() {
-      const savedMatches = localStorage.getItem('sanco_matches_v2');
+      const savedMatches = localStorage.getItem('sanco_matches_v2026');
       if (savedMatches) {
         try { matches = JSON.parse(savedMatches); } catch(e){}
       }
-      const savedBank = localStorage.getItem('sanco_bank_v2');
+      const savedBank = localStorage.getItem('sanco_bank_v2026');
       if (savedBank) {
         try { bankConfig = JSON.parse(savedBank); } catch(e){}
       }
     }
 
-    // CHUYỂN ĐỔI VAI TRÒ
     function toggleRoleModal() {
       if (currentRole === 'captain') {
         currentRole = 'player';
@@ -302,14 +304,14 @@
     }
 
     function verifyPin() {
-      const pin = document.getElementById('input-pin').value;
+      const pin = document.getElementById('input-pin').value.trim();
       if (pin === captainPin) {
         currentRole = 'captain';
         document.getElementById('pin-modal').classList.add('hidden');
         updateRoleUI();
         showToast("Chào Đội trưởng Vương Hưng!");
       } else {
-        alert("Sai mã PIN! (Mã mặc định là 1234)");
+        alert("Sai mã PIN! Vui lòng thử lại.");
       }
     }
 
@@ -320,7 +322,7 @@
       const capBankEdit = document.getElementById('captain-bank-edit');
 
       if (currentRole === 'captain') {
-        ind.innerHTML = `<span class="text-yellow-300 font-bold"><i class="fa-solid fa-crown"></i> Đội trưởng (Hưng)</span>`;
+        ind.innerHTML = `<span class="text-yellow-300 font-bold"><i class="fa-solid fa-crown"></i> Đội trưởng (Vương Hưng)</span>`;
         btnText.textContent = "Thoát quyền";
         capControls.classList.remove('hidden');
         capBankEdit.classList.remove('hidden');
@@ -333,7 +335,6 @@
       renderAll();
     }
 
-    // CHUYỂN ĐỔI 2 TRẬN TRONG TUẦN
     function switchMatch(idx) {
       currentMatchIndex = idx;
       
@@ -368,7 +369,6 @@
       }
     }
 
-    // CHUYỂN SUB TABS
     function switchSubTab(tab) {
       activeSubTab = tab;
       ['attend', 'pay', 'qr'].forEach(t => {
@@ -382,7 +382,6 @@
       if (tab === 'qr') updateQR();
     }
 
-    // TÍNH TOÁN TIỀN VÀ QUÂN SỐ
     function calculateMatch() {
       const m = matches[currentMatchIndex];
       let totalSlots = 0;
@@ -401,7 +400,7 @@
       const totalCost = (m.pitchFee || 0) + (m.waterFee || 0);
       let feePerPerson = 0;
       if (totalSlots > 0) {
-        feePerPerson = Math.ceil((totalCost / totalSlots) / 5000) * 5000; // Làm tròn 5k
+        feePerPerson = Math.ceil((totalCost / totalSlots) / 5000) * 5000;
       }
 
       return { totalSlots, attendingCount, paidCount, totalCost, feePerPerson };
@@ -415,7 +414,6 @@
       renderAll();
     }
 
-    // RENDER GIAO DIỆN CHÍNH
     function renderAll() {
       const m = matches[currentMatchIndex];
       const calc = calculateMatch();
@@ -435,7 +433,6 @@
       updateQR();
     }
 
-    // RENDER TAB ĐIỂM DANH
     function renderAttendanceList(feePerPerson) {
       const listEl = document.getElementById('attendance-list');
       const m = matches[currentMatchIndex];
@@ -458,19 +455,19 @@
               <div class="text-xs font-bold text-slate-800 truncate ${p.isAttending ? '' : 'line-through text-slate-400'}">
                 ${p.name}
               </div>
-              ${p.isAttending && p.guestCount > 0 ? `<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">+${p.guestCount} bạn</span>` : ''}
+              ${p.isAttending && p.guestCount > 0 ? `<span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">+${p.guestCount} bạn</span>` : ''}
             </div>
           </div>
 
           <div class="flex items-center space-x-1.5">
             ${p.isAttending ? `
               <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs">
-                <button onclick="changeGuest(${index}, -1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white">-</button>
+                <button onclick="changeGuest(${index}, -1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold">-</button>
                 <span class="px-1 text-[11px] font-bold text-slate-700">${p.guestCount > 0 ? '+' + p.guestCount : '0'}</span>
-                <button onclick="changeGuest(${index}, 1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white">+</button>
+                <button onclick="changeGuest(${index}, 1)" class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold">+</button>
               </div>
             ` : `
-              <button onclick="toggleAttendance(${index})" class="text-[11px] bg-slate-200 hover:bg-emerald-600 hover:text-white px-2.5 py-1 rounded-lg text-slate-600 transition">
+              <button onclick="toggleAttendance(${index})" class="text-[11px] bg-slate-200 hover:bg-emerald-600 hover:text-white px-2.5 py-1 rounded-lg text-slate-600 transition font-medium">
                 Báo đi
               </button>
             `}
@@ -480,7 +477,6 @@
       });
     }
 
-    // RENDER TAB TIỀN SÂN VỚI 3 TRẠNG THÁI
     function renderPaymentList(feePerPerson) {
       const listEl = document.getElementById('payment-list');
       const m = matches[currentMatchIndex];
@@ -505,20 +501,18 @@
         let actionBtn = '';
 
         if (p.paymentStatus === 'unpaid') {
-          // Trạng thái 1: CHƯA ĐÓNG
           statusBadge = `<span class="badge-unpaid text-[10px] font-semibold px-2 py-0.5 rounded-full">⚪ Chưa đóng</span>`;
           actionBtn = `
-            <button onclick="setPlayerPayment(${originalIndex}, 'pending')" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap">
+            <button onclick="setPlayerPayment(${originalIndex}, 'pending')" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-2.5 py-1.5 rounded-lg transition shadow-xs whitespace-nowrap">
               <i class="fa-solid fa-paper-plane text-[10px]"></i> Tôi đã chuyển
             </button>
           `;
         } else if (p.paymentStatus === 'pending') {
-          // Trạng thái 2: ĐÃ CHUYỂN (Chờ Hưng duyệt)
           statusBadge = `<span class="badge-pending text-[10px] font-bold px-2 py-0.5 rounded-full">🟡 Đã chuyển (Chờ Hưng)</span>`;
           
           if (currentRole === 'captain') {
             actionBtn = `
-              <button onclick="setPlayerPayment(${originalIndex}, 'paid')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap flex items-center gap-1">
+              <button onclick="setPlayerPayment(${originalIndex}, 'paid')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg transition shadow-xs whitespace-nowrap flex items-center gap-1">
                 <i class="fa-solid fa-check"></i> Duyệt ting-ting
               </button>
             `;
@@ -530,12 +524,11 @@
             `;
           }
         } else if (p.paymentStatus === 'paid') {
-          // Trạng thái 3: DUYỆT TING-TING
           statusBadge = `<span class="badge-paid text-[10px] font-bold px-2 py-0.5 rounded-full">🟢 Duyệt ting-ting</span>`;
           
           if (currentRole === 'captain') {
             actionBtn = `
-              <button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[10px] text-slate-400 hover:text-red-500 px-2 py-1 rounded bg-slate-100">
+              <button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[10px] text-slate-400 hover:text-red-500 px-2 py-1 rounded bg-slate-100 font-medium">
                 Bỏ duyệt
               </button>
             `;
@@ -548,7 +541,7 @@
           <div class="min-w-0 pr-2">
             <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5 truncate">
               ${p.name}
-              ${slots > 1 ? `<span class="text-[10px] text-blue-600">(${slots} suất)</span>` : ''}
+              ${slots > 1 ? `<span class="text-[10px] text-emerald-700 font-semibold">(${slots} suất)</span>` : ''}
             </div>
             <div class="text-[11px] font-semibold text-emerald-700 mt-0.5">
               ${amount.toLocaleString('vi-VN')}đ
@@ -563,7 +556,6 @@
       });
     }
 
-    // THAO TÁC ĐIỂM DANH & THANH TOÁN
     function toggleAttendance(index) {
       const p = matches[currentMatchIndex].players[index];
       p.isAttending = !p.isAttending;
@@ -582,13 +574,14 @@
       renderAll();
     }
 
+    // Thêm bạn mới: Hiển thị tên nguyên bản, không gắn chữ "(Bạn ngoài)"
     function addGuest() {
       const input = document.getElementById('guest-name');
       const name = input.value.trim();
       if (!name) return;
 
       matches[currentMatchIndex].players.push({
-        name: name + " (Bạn ngoài)",
+        name: name,
         isAttending: true,
         guestCount: 0,
         paymentStatus: 'unpaid'
@@ -601,9 +594,8 @@
     }
 
     function setPlayerPayment(index, status) {
-      // Bảo vệ: Chỉ captain mới được set thành 'paid'
       if (status === 'paid' && currentRole !== 'captain') {
-        alert("Chỉ Đội trưởng Hưng mới được duyệt Ting-ting!");
+        alert("Chỉ Đội trưởng Vương Hưng mới được duyệt Ting-ting!");
         return;
       }
       matches[currentMatchIndex].players[index].paymentStatus = status;
@@ -611,7 +603,6 @@
       renderAll();
     }
 
-    // TẠO MÃ VIETQR
     function updateQR() {
       const calc = calculateMatch();
       const m = matches[currentMatchIndex];
@@ -635,7 +626,6 @@
       updateQR();
     }
 
-    // COPY TIN NHẮN GỬI NHÓM ZALO
     function copyZaloMsg() {
       const m = matches[currentMatchIndex];
       const calc = calculateMatch();
