@@ -135,11 +135,11 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền sân (VNĐ):</label>
-            <input type="number" id="input-pitch" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 600000" oninput="updateFees()" onchange="updateFees()" />
+            <input type="number" id="input-pitch" min="0" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 600000" oninput="updateFees()" onchange="updateFees()" />
           </div>
           <div>
             <label class="text-[11px] font-medium text-slate-600">Tiền nước/bóng:</label>
-            <input type="number" id="input-water" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 80000" oninput="updateFees()" onchange="updateFees()" />
+            <input type="number" id="input-water" min="0" class="w-full text-xs p-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold" placeholder="VD: 80000" oninput="updateFees()" onchange="updateFees()" />
           </div>
         </div>
 
@@ -606,7 +606,6 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    // Đã import thêm runTransaction để giải quyết Race Condition
     import { getFirestore, doc, setDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // 10 CẦU THỦ CỐ ĐỊNH BAN ĐẦU
@@ -657,14 +656,19 @@
       measurementId: "G-ZBX9DQKZE6"
     };
 
+    // Hàm chống XSS để bảo mật khi nhập tên khách
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
     // Hàm Wrapper chuẩn để đảm bảo mọi cập nhật dữ liệu đều thông qua Transaction an toàn
     async function executeTransaction(actionCallback) {
+      // FIX BUGS: Chặn người dùng thao tác khi Cloud chưa sẵn sàng để tránh ghi đè dữ liệu trắng
       if (!isCloudReady || !db) {
-        // Fallback chạy local nếu chưa có mạng
-        actionCallback();
-        syncToCloud();
-        renderAll();
-        return;
+        showToast("⏳ Đang kết nối dữ liệu Cloud, vui lòng chờ...");
+        return; 
       }
       try {
         const dataDocRef = doc(db, 'matches', 'current_week');
@@ -678,7 +682,6 @@
           
           transaction.update(dataDocRef, { matches: matches });
         });
-        // onSnapshot sẽ tự động trigger renderAll() nên không cần gọi ở đây
       } catch (e) {
         console.error("Transaction Error:", e);
         showToast(typeof e === 'string' ? e : "Lỗi đồng bộ dữ liệu, vui lòng thử lại!");
@@ -748,7 +751,7 @@
         const dataDocRef = doc(db, 'matches', 'current_week');
         await setDoc(dataDocRef, {
           matches: matches, bankConfig: bankConfig, captainPin: captainPin, lastUpdated: new Date().toISOString()
-        }, { merge: true }); // Dùng merge để không phá vỡ cấu trúc nếu có
+        }, { merge: true }); 
       } catch (err) {
         showToast("⚠️ Chưa lưu được lên Cloud!");
       }
@@ -950,7 +953,6 @@
       const totalCost = (Number(m ? m.pitchFee : 0) || 0) + (Number(m ? m.waterFee : 0) || 0);
       let feePerPerson = 0, gkFee = 0;
 
-      // Đã sửa lại logic tính toán, KHÔNG làm tròn lên 5k nữa
       if (totalSlots > 0) {
         const effectivePayingSlots = outfieldSlots + (gkCount * (1 - (gkDisc / 100)));
         if (effectivePayingSlots > 0) {
@@ -978,8 +980,8 @@
     window.updateFees = function() {
       executeTransaction(() => {
         const m = matches[currentMatchIndex];
-        m.pitchFee = parseInt(document.getElementById('input-pitch').value) || 0;
-        m.waterFee = parseInt(document.getElementById('input-water').value) || 0;
+        m.pitchFee = Math.max(0, parseInt(document.getElementById('input-pitch').value) || 0);
+        m.waterFee = Math.max(0, parseInt(document.getElementById('input-water').value) || 0);
       });
     };
 
@@ -1078,13 +1080,18 @@
           else tagBadgeHTML = `<span class="text-[9px] bg-slate-100 text-slate-600 px-1 py-0.2 rounded border border-slate-200 font-normal">Thêm</span>`;
         }
 
-        const isActionDisabled = m.isLocked && currentRole !== 'captain';
-        const gkButtonHTML = p.isAttending ? `<button onclick="toggleGk(${index})" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold transition flex items-center gap-0.5 ${p.isGk ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-400 hover:text-slate-600 border border-slate-200'} ${isActionDisabled ? 'opacity-70 cursor-not-allowed' : ''}" title="${isActionDisabled ? 'Danh sách đã chốt' : 'Bấm để chọn/hủy vị trí Thủ Môn'}">🧤 ${p.isGk ? 'Gôn' : 'GK?'}</button>` : '';
+        // FIX BUG 2: Khóa thao tác điểm danh/sửa người nếu danh sách đã chốt HOẶC người đó đang xử lý tiền bạc
+        const isLockedByCaptain = m.isLocked && currentRole !== 'captain';
+        const isLockedByPayment = p.paymentStatus !== 'unpaid';
+        const isActionDisabled = isLockedByCaptain || isLockedByPayment;
+        const disableTitle = isLockedByPayment ? 'Vui lòng Hủy báo chuyển tiền để sửa' : (isLockedByCaptain ? 'Danh sách đã chốt' : 'Thao tác');
+
+        const gkButtonHTML = p.isAttending ? `<button onclick="toggleGk(${index})" class="text-[10px] px-1.5 py-0.5 rounded-md font-bold transition flex items-center gap-0.5 ${p.isGk ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-400 hover:text-slate-600 border border-slate-200'} ${isActionDisabled ? 'opacity-50 cursor-not-allowed' : ''}" ${isActionDisabled ? 'disabled' : ''} title="${disableTitle}">🧤 ${p.isGk ? 'Gôn' : 'GK?'}</button>` : '';
 
         item.innerHTML = `
           <div class="flex items-center space-x-2 min-w-0">
-            <button onclick="toggleAttendance(${index})" class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition flex-shrink-0 ${p.isAttending ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'} ${isActionDisabled ? 'opacity-80' : ''}" title="${isActionDisabled ? 'Danh sách đã chốt sổ' : 'Đổi trạng thái đi/nghỉ'}">
-              <i class="fa-solid ${p.isAttending ? (isActionDisabled ? 'fa-check' : 'fa-check') : (isActionDisabled ? 'fa-lock text-xs' : 'fa-xmark')}"></i>
+            <button onclick="toggleAttendance(${index})" class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition flex-shrink-0 ${p.isAttending ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'} ${isActionDisabled ? 'opacity-50 cursor-not-allowed' : ''}" ${isActionDisabled ? 'disabled' : ''} title="${disableTitle}">
+              <i class="fa-solid ${p.isAttending ? 'fa-check' : 'fa-xmark'}"></i>
             </button>
             <div class="truncate">
               <div class="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5 ${p.isAttending ? '' : 'line-through text-slate-400'}">
@@ -1094,7 +1101,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-1.5 flex-shrink-0">
-            ${p.isAttending ? `<div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs ${isActionDisabled ? 'opacity-60' : ''}"><button onclick="changeGuest(${index}, -1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">-</button><span class="px-1 text-[11px] font-bold text-slate-700">${p.guestCount > 0 ? '+' + p.guestCount : '0'}</span><button onclick="changeGuest(${index}, 1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">+</button></div>` : `<button onclick="toggleAttendance(${index})" class="text-[11px] ${isActionDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-200 hover:bg-emerald-600 hover:text-white text-slate-600'} px-2.5 py-1 rounded-lg transition font-medium">${isActionDisabled ? '🔒 Đã chốt' : 'Báo đi'}</button>`}
+            ${p.isAttending ? `<div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs ${isActionDisabled ? 'opacity-50' : ''}"><button onclick="changeGuest(${index}, -1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">-</button><span class="px-1 text-[11px] font-bold text-slate-700">${p.guestCount > 0 ? '+' + p.guestCount : '0'}</span><button onclick="changeGuest(${index}, 1)" ${isActionDisabled ? 'disabled' : ''} class="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:bg-white font-bold ${isActionDisabled ? 'cursor-not-allowed' : ''}">+</button></div>` : `<button onclick="toggleAttendance(${index})" ${isActionDisabled ? 'disabled' : ''} class="text-[11px] ${isActionDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-200 hover:bg-emerald-600 hover:text-white text-slate-600'} px-2.5 py-1 rounded-lg transition font-medium">${isLockedByCaptain ? '🔒 Đã chốt' : 'Báo đi'}</button>`}
             ${deleteBtnHTML}
           </div>
         `;
@@ -1116,7 +1123,9 @@
     };
 
     window.saveEditPlayerModal = function() {
-      const newName = document.getElementById('edit-player-name-input').value.trim();
+      const rawName = document.getElementById('edit-player-name-input').value.trim();
+      const newName = escapeHTML(rawName); 
+      
       if (!newName || playerToEditIndex === null) return;
       const syncBoth = document.getElementById('edit-player-both-matches').checked;
       
@@ -1164,7 +1173,12 @@
       if (!listEl || !m) return;
       listEl.innerHTML = '';
 
-      let attendingPlayers = m.players.filter(p => p.isAttending);
+      // FIX BUG 1: Lưu giữ vị trí index gốc (originalIndex) trước khi filter 
+      // để tránh lỗi trùng tên (findIndex bị sai người)
+      let attendingPlayers = m.players
+        .map((p, index) => ({ ...p, originalIndex: index }))
+        .filter(p => p.isAttending);
+
       if (paymentFilter === 'unpaid') attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'unpaid');
       else if (paymentFilter === 'pending') attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'pending');
       else if (paymentFilter === 'paid') attendingPlayers = attendingPlayers.filter(p => p.paymentStatus === 'paid');
@@ -1175,7 +1189,7 @@
       }
 
       attendingPlayers.forEach(p => {
-        const originalIndex = m.players.findIndex(x => x.name === p.name);
+        const originalIndex = p.originalIndex;
         const guestSlots = p.guestCount || 0;
         let amount = p.isGk ? (gkFee + (guestSlots * feePerPerson)) : ((1 + guestSlots) * feePerPerson);
 
@@ -1199,14 +1213,19 @@
         } else if (p.paymentStatus === 'pending') {
           statusBadge = `<span class="badge-pending text-[10px] font-bold px-2 py-0.5 rounded-full">🟡 Đã chuyển</span>`;
           if (currentRole === 'captain') {
-            actionBtn = `<button onclick="setPlayerPayment(${originalIndex}, 'paid')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap flex items-center gap-1"><i class="fa-solid fa-check"></i> Duyệt ting-ting</button>`;
+            actionBtn = `
+              <div class="flex items-center gap-2">
+                <button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[11px] text-slate-400 hover:text-red-500 underline" title="Chưa nhận được tiền, trả về Chưa đóng">Từ chối</button>
+                <button onclick="setPlayerPayment(${originalIndex}, 'paid')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap flex items-center gap-1"><i class="fa-solid fa-check"></i> Duyệt ting-ting</button>
+              </div>
+            `;
           } else {
             actionBtn = `<button onclick="setPlayerPayment(${originalIndex}, 'unpaid')" class="text-[11px] text-slate-400 hover:text-red-500 underline ml-1">Hủy báo</button>`;
           }
         } else {
           statusBadge = `<span class="badge-paid text-[10px] font-bold px-2 py-0.5 rounded-full">🟢 Đã duyệt</span>`;
           if (currentRole === 'captain') {
-            actionBtn = `<button onclick="setPlayerPayment(${originalIndex}, 'pending')" class="text-[11px] text-slate-400 hover:text-red-500 underline ml-1">Hủy duyệt</button>`;
+            actionBtn = `<button onclick="setPlayerPayment(${originalIndex}, 'pending')" class="text-[11px] text-slate-400 hover:text-amber-600 underline ml-1">Hủy duyệt (Về chờ)</button>`;
           }
         }
 
@@ -1225,7 +1244,6 @@
       });
     }
 
-    // HIỂN THỊ MÃ QR DÀNH RIÊNG CHO CÁ NHÂN
     window.openPersonalQR = function(index) {
       const m = matches[currentMatchIndex];
       if (!m || !m.players[index]) return;
@@ -1235,7 +1253,6 @@
       const guestSlots = p.guestCount || 0;
       let amount = p.isGk ? (calc.gkFee + (guestSlots * calc.feePerPerson)) : ((1 + guestSlots) * calc.feePerPerson);
 
-      // Xóa dấu tiếng Việt cho Nội dung CK
       const removeAccents = (str) => {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
       }
@@ -1293,7 +1310,9 @@
 
     window.addGuest = function() {
       const input = document.getElementById('guest-name');
-      const name = input ? input.value.trim() : '';
+      const rawName = input ? input.value.trim() : '';
+      const name = escapeHTML(rawName);
+      
       if (!name) return;
       const isCaptain = (currentRole === 'captain');
 
@@ -1460,7 +1479,6 @@
       executeTransaction(() => {
         const m = matches[currentMatchIndex];
         m.isLocked = false; 
-        // Lọc loại bỏ khách vãng lai, giữ lại thành viên nòng cốt
         m.players = m.players.filter(p => p.addedByCaptain).map(p => ({
           ...p, isAttending: false, guestCount: 0, isGk: false, paymentStatus: 'unpaid'
         }));
@@ -1531,6 +1549,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      // FIX BUGS: Load dữ liệu bộ nhớ đệm (Cache) ngay lập tức lúc mở app để tránh bị trắng danh sách
+      loadLocalFallback(); 
       updateRoleUI(); window.switchMatch(0); window.switchSubTab('attend'); initializeCloudSync();
     });
   </script>
